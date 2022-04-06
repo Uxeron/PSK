@@ -1,12 +1,22 @@
+import React from 'react';
+import { BrowserRouter, Route, Routes } from 'react-router-dom'
+import { BrowseScreen } from './Screens/BrowseScreen';
+import { DetailsScreen } from './Screens/DetailsScreen';
+import { NotFound } from './Screens/NotFound';
+import { UploadScreen } from './Screens/UploadScreen';
+import { UserScreen } from './Screens/UserScreen';
 
 function App() {
-  return (
-    <div className="p-10 min-h-screen flex items-center justify-center bg-cool-gray-700">
-      <h1 className="text-9xl font-black text-white text-center">
-        <span className="bg-gradient-to-r text-transparent bg-clip-text from-green-400 to-purple-500">
-          tai tuoj kažką sugalvosim
-        </span>
-      </h1>
+  return (<div>
+    <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<BrowseScreen/>} />
+          <Route path="/upload" element={<UploadScreen/>} />
+          <Route path="/details/:itemId" element={<DetailsScreen/>} />          <Route path="/user/:userId" element={<UserScreen/>} />
+          <Route path="/user/:userId" element={<UserScreen/>} />
+          <Route path="/*" element={<NotFound />} />
+        </Routes>
+    </BrowserRouter>
     </div>
   );
 }
