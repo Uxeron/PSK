@@ -1,4 +1,5 @@
 using Data;
+using WebAPI.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,6 +12,8 @@ services.AddEndpointsApiExplorer();
 services.AddSwaggerGen();
 
 services.AddDbContext<PskContext>();
+
+services.AddScoped<IItemService, ItemService>();
 
 var app = builder.Build();
 
