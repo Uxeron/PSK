@@ -1,0 +1,8 @@
+root = true
+
+[*.cs]
+
+csharp_style_namespace_declarations = file_scoped                           # https://docs.microsoft.com/en-us/dotnet/fundamentals/code-analysis/style-rules/formatting-rules#csharp_style_namespace_declarations
+dotnet_sort_system_directives_first = true                                  # https://docs.microsoft.com/en-us/dotnet/fundamentals/code-analysis/style-rules/formatting-rules#dotnet_sort_system_directives_first
+csharp_using_directive_placement = inside_namespace                         # https://docs.microsoft.com/en-us/dotnet/fundamentals/code-analysis/style-rules/ide0065#example
+insert_final_newline = true
