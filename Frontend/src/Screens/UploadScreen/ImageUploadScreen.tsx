@@ -1,9 +1,9 @@
 import React from 'react';
 
-export const UploadScreen = () => {
+export const ImageUploadScreen = () => {
     return (
         <>
-            UploadScreen
+            ImageUploadScreen
         </>
     );
 }
