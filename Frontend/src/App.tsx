@@ -12,7 +12,7 @@ function App() {
         <Routes>
           <Route path="/" element={<BrowseScreen/>} />
           <Route path="/upload" element={<UploadScreen/>} />
-          <Route path="/details/:itemId" element={<DetailsScreen/>} />          <Route path="/user/:userId" element={<UserScreen/>} />
+          <Route path="/details/:itemId" element={<DetailsScreen/>} />
           <Route path="/user/:userId" element={<UserScreen/>} />
           <Route path="/*" element={<NotFound />} />
         </Routes>
