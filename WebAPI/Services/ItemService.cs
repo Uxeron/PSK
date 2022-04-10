@@ -1,7 +1,7 @@
 ﻿namespace WebAPI.Services;
 
 using Data;
-using Data.Models.Item;
+using Data.Models;
 using Microsoft.EntityFrameworkCore;
 
 public class ItemService : IItemService

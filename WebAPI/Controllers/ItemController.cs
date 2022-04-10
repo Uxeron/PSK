@@ -1,6 +1,6 @@
 ﻿namespace WebAPI.Controllers;
 
-using Data.Models.Item;
+using Data.Models;
 using Microsoft.AspNetCore.Mvc;
 using WebAPI.Services;
 
