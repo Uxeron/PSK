@@ -14,6 +14,7 @@ services.AddSwaggerGen();
 services.AddDbContext<PskContext>();
 
 services.AddScoped<IItemService, ItemService>();
+services.AddScoped<IUserService, UserService>();
 
 var app = builder.Build();
 
