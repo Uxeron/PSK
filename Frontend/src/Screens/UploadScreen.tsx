@@ -7,6 +7,8 @@ import { useNavigate } from 'react-router-dom';
 import { Spinner } from '../Components/Spinner';
 import { Listbox, Transition } from '@headlessui/react'
 import { CheckIcon, SelectorIcon } from '@heroicons/react/solid'
+import { toast } from 'react-toastify';
+
 
 export const UploadScreen = () => {
     const navigate = useNavigate();
@@ -29,8 +31,18 @@ export const UploadScreen = () => {
     const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         setOnLoad(true);
-        ItemService.upload(uploadData).then(() => { navigate('/') }
-        );
+        ItemService.upload(uploadData);
+        toast('Your item is being processed at the moment.', {
+            position: "top-right",
+            autoClose: 5000,
+            hideProgressBar: true,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            type: "info",
+        });
+        navigate('/');
     }
 
     const applyValuesToState = () => {
