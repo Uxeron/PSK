@@ -31,6 +31,6 @@ public class UserController : ControllerBase
     public async Task<IActionResult> CreateUser([FromBody] User user)
     {
         await _userService.CreateUser(user);
-        return NoContent();
+        return Ok();
     }
 }
