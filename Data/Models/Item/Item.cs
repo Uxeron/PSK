@@ -8,7 +8,7 @@ public class Item
     public string Image { get; set; } = string.Empty;
     public ItemCondition Condition { get; set; }
     public ItemCategory Category { get; set; }
-    public bool IsLoanable { get; set; } //TODO if someone will have a better idea how to rename it - do it :)
+    public bool IsToGiveAway { get; set; }
     public DateTime? From { get; set; }
     public DateTime? To { get; set; }
     public DateTime UploadDate { get; set; }
