@@ -1,7 +1,7 @@
 import { Listbox, Transition } from "@headlessui/react"
 import { CheckIcon, SelectorIcon } from "@heroicons/react/solid"
 import React, { Fragment } from "react"
-import { toGiveAway } from "../../Data/utils";
+import { toGiveAway } from "../../../Data/utils";
 
 type Props = {
     setHandler: React.Dispatch<React.SetStateAction<{

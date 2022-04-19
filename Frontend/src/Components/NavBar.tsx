@@ -1,13 +1,16 @@
 import React from 'react';
+import { t } from '../text';
 
 export const NavBar = () => {
     return (
         <nav className="bg-white shadow dark:bg-gray-800">
-            <div className="container px-6 py-4 mx-auto">
+            <div className="container px-6 py-3 mx-auto">
                 <div className="md:flex md:items-center md:justify-between">
                     <div className="flex items-center justify-between">
-                        <div className="text-xl font-semibold text-gray-700">
-                            <a className="text-2xl font-bold text-gray-800 transition-colors duration-200 transform dark:text-white lg:text-3xl hover:text-gray-700 dark:hover:text-gray-300" href="#">Name</a>
+                        <div className="pb-1">
+                            <a href="/" className="text-2xl font-bold text-gray-800 transition-colors duration-200 transform dark:text-white lg:text-3xl hover:text-gray-700 dark:hover:text-gray-300">
+                                {t.navBar.name}
+                            </a>
                         </div>
 
                         <div className="flex md:hidden">
@@ -20,7 +23,16 @@ export const NavBar = () => {
                     </div>
 
                     <div className="flex-1 md:flex md:items-center md:justify-between">
-                        <div className="flex flex-col -mx-4 md:flex-row md:items-center md:mx-8"/>
+                        <div className="flex flex-col px-2 py-3 -mx-4 md:flex-row md:mx-0 md:py-0">
+                            <a href="/" className="px-2 py-1 text-sm font-medium text-gray-700 transition-colors duration-200 transform rounded dark:text-gray-200 hover:bg-gray-900 hover:text-gray-100 md:mx-2">
+                                {t.navBar.browse}
+                            </a>
+                            <a href="/upload" className="px-2 py-1 text-sm font-medium text-gray-700 transition-colors duration-200 transform rounded dark:text-gray-200 hover:bg-gray-900 hover:text-gray-100 md:mx-2">
+                                {t.navBar.upload}
+                            </a>
+                        </div>
+
+                        <div className="flex flex-col -mx-4 md:flex-row md:items-center md:mx-8" />
 
                         <div className="flex items-center mt-4 md:mt-0">
                             <button className="hidden mx-4 text-gray-600 transition-colors duration-200 transform md:block dark:text-gray-200 hover:text-gray-700 dark:hover:text-gray-400 focus:text-gray-700 dark:focus:text-gray-400 focus:outline-none" aria-label="show notifications">

@@ -1,8 +1,8 @@
 import { Listbox, Transition } from "@headlessui/react";
 import { CheckIcon, SelectorIcon } from "@heroicons/react/solid";
 import React, { Fragment } from "react";
-import { ItemCategory } from "../../Data/model";
-import { itemCategories, itemCategoryMap } from "../../Data/utils";
+import { ItemCategory } from "../../../Data/model";
+import { itemCategories, itemCategoryMap } from "../../../Data/utils";
 
 type Props = {
     setHandler: React.Dispatch<React.SetStateAction<{

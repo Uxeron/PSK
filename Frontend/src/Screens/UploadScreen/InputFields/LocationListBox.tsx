@@ -1,7 +1,7 @@
 import { Listbox, Transition } from "@headlessui/react";
 import { CheckIcon, SelectorIcon } from "@heroicons/react/solid";
 import React, { Fragment } from "react";
-import { mockLocation } from "../../Data/utils";
+import { mockLocation } from "../../../Data/utils";
 
 type Props = {
     setHandler: React.Dispatch<React.SetStateAction<{
