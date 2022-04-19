@@ -7,9 +7,11 @@ import { NotFound } from './Screens/NotFound';
 import { UploadScreen } from './Screens/UploadScreen/UploadScreen';
 import { UserScreen } from './Screens/UserScreen';
 import "react-toastify/dist/ReactToastify.css";
+import { NavBar } from './Components/NavBar';
 
 function App() {
   return (<div>
+    <NavBar />
     <ToastContainer />
     <BrowserRouter>
       <Routes>
