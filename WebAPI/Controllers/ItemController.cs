@@ -22,9 +22,9 @@ public class ItemController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<IActionResult> CreateItem([FromBody] Item item)
+    public async Task<IActionResult> CreateItem([FromBody] PartialItem item)
     {
-        await _itemService.CreateItem(item);
-        return NoContent();
+        Guid itemId = await _itemService.CreateItem(item);
+        return Ok(itemId);
     }
 }
