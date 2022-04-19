@@ -2,7 +2,7 @@
 
 using Data.Models;
 using Microsoft.AspNetCore.Mvc;
-using WebAPI.Services;
+using WebAPI.Services.Interfaces;
 
 [Route("api/[controller]")]
 [ApiController]

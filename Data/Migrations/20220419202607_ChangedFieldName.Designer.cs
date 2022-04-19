@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Data.Migrations
 {
     [DbContext(typeof(PskContext))]
-    [Migration("20220419201911_ChangedFieldName")]
+    [Migration("20220419202607_ChangedFieldName")]
     partial class ChangedFieldName
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -68,7 +68,7 @@ namespace Data.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<bool>("IsLoanable")
+                    b.Property<bool>("IsToGiveAway")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Name")

@@ -1,5 +1,4 @@
 namespace WebAPI.Services.Interfaces;
-namespace WebAPI.Services;
 
 using System;
 using System.Threading.Tasks;

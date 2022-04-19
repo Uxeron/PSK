@@ -8,12 +8,18 @@ namespace Data.Migrations
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-
+            migrationBuilder.RenameColumn(
+                name: "IsLoanable",
+                table: "Items",
+                newName: "IsToGiveAway");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-
+            migrationBuilder.RenameColumn(
+                name: "IsToGiveAway",
+                table: "Items",
+                newName: "IsLoanable");
         }
     }
 }

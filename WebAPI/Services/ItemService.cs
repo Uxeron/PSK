@@ -37,7 +37,7 @@ public class ItemService : IItemService
         itemEntity.Description = partialItem.Description;
         itemEntity.Condition = partialItem.Condition;
         itemEntity.Category = partialItem.Category;
-        itemEntity.IsLoanable = partialItem.IsLoanable;
+        itemEntity.IsToGiveAway = partialItem.IsToGiveAway;
         itemEntity.User = _userService.GetUser(partialItem.AddressId).Result;
         itemEntity.UploadDate = DateTime.Now;
 

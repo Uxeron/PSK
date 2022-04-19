@@ -66,7 +66,7 @@ namespace Data.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<bool>("IsLoanable")
+                    b.Property<bool>("IsToGiveAway")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Name")

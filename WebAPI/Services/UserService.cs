@@ -14,7 +14,7 @@ public class UserService : IUserService
         _context = context;
     }
 
-    public async Task<User> GetUser(Guid id)
+    public async Task<User?> GetUser(Guid id)
     {
         return await _context.Users.Where(i => i.UserId == id).FirstOrDefaultAsync();
     }
