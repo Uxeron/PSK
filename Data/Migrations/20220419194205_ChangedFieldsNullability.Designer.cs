@@ -3,6 +3,7 @@ using System;
 using Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Data.Migrations
 {
     [DbContext(typeof(PskContext))]
-    partial class PskContextModelSnapshot : ModelSnapshot
+    [Migration("20220419194205_ChangedFieldsNullability")]
+    partial class ChangedFieldsNullability
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "6.0.3");
@@ -38,30 +40,6 @@ namespace Data.Migrations
                     b.HasKey("AddressId");
 
                     b.ToTable("Address");
-                });
-
-            modelBuilder.Entity("Data.Models.Image", b =>
-                {
-                    b.Property<Guid>("ImageId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("TEXT");
-
-                    b.Property<byte[]>("ImageData")
-                        .IsRequired()
-                        .HasColumnType("BLOB");
-
-                    b.Property<Guid>("ItemId")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("ImageId");
-
-                    b.HasIndex("ItemId");
-
-                    b.ToTable("Image");
                 });
 
             modelBuilder.Entity("Data.Models.Item.Item", b =>
@@ -90,7 +68,7 @@ namespace Data.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<bool>("IsToGiveAway")
+                    b.Property<bool>("IsLoanable")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Name")
@@ -154,17 +132,6 @@ namespace Data.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("Data.Models.Image", b =>
-                {
-                    b.HasOne("Data.Models.Item.Item", "Item")
-                        .WithMany("Images")
-                        .HasForeignKey("ItemId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Item");
-                });
-
             modelBuilder.Entity("Data.Models.Item.Item", b =>
                 {
                     b.HasOne("Data.Models.Address", "Address")
@@ -187,11 +154,6 @@ namespace Data.Migrations
                         .HasForeignKey("AddressId");
 
                     b.Navigation("Address");
-                });
-
-            modelBuilder.Entity("Data.Models.Item.Item", b =>
-                {
-                    b.Navigation("Images");
                 });
 #pragma warning restore 612, 618
         }
