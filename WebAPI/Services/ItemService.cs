@@ -20,7 +20,7 @@ public class ItemService : IItemService
 
     public async Task<Guid> CreateItem(PartialItem partialItem)
     {
-        Item item = buildItemEntity(partialItem);
+        Item item = BuildItemEntity(partialItem);
 
         await _context.Items.AddAsync(item);
         await _context.SaveChangesAsync();
@@ -28,7 +28,7 @@ public class ItemService : IItemService
         return item.ItemId;
     }
 
-    private Item buildItemEntity(PartialItem partialItem)    
+    private Item BuildItemEntity(PartialItem partialItem)    
     {
         Item itemEntity = new Item();
 
