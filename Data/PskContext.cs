@@ -8,6 +8,7 @@ public class PskContext : DbContext
 {
     public DbSet<Item> Items { get; set; }
     public DbSet<User> Users { get; set; }
+    public DbSet<Image> Images { get; set; }
 
     public string DbPath { get; }
 
