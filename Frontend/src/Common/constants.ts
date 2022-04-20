@@ -1,1 +1,1 @@
-export const BASE_URL = 'https://jsonblob.com'
+export const BASE_URL = 'https://localhost:7210/api'

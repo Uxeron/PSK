@@ -14,12 +14,13 @@ import { t } from '../../text';
 export const UploadScreen = () => {
     const navigate = useNavigate();
     const [uploadData, setUploadData] = useState(initialUploadData);
+    const [onLoad, setOnLoad] = useState(false)
     const [name, setName] = useState('');
     const [description, setDescription] = useState('');
-    const [onLoad, setOnLoad] = useState(false)
     const [selectedCategory, setSelectedCategory] = useState(itemCategories[0])
     const [selectedCondition, setSelectedCondition] = useState(itemConditions[0])
     const [giveAwayState, setGiveAwayState] = useState(toGiveAway[0])
+    const [tags, setTags] = useState('')
     const [location, setLocation] = useState(mockLocation[0])
     const [openFileSelector, { filesContent, loading, errors }] = useFilePicker({
         readAs: "DataURL",
@@ -52,9 +53,10 @@ export const UploadScreen = () => {
             description: description,
             condition: selectedCondition.name,
             category: selectedCategory.name,
-            uploadDate: new Date(),
-            userId: 'test userId',
-            addressId: location.name,
+            isToGiveAway: giveAwayState.name === 'Yes',
+            userId: '3fa85f64-5717-4562-b3fc-2c963f66afa6',
+            addressId: '3fa85f64-5717-4562-b3fc-2c963f66afa6',
+            tags: 'tags',
             image: filesContent.map(file => file.content).toString(),
         })
     }
@@ -109,7 +111,7 @@ export const UploadScreen = () => {
                                     <label className="text-gray-700 dark:text-gray-200" htmlFor="name">
                                         {t.uploadScreen.card1.tagsLabel}
                                     </label>
-                                    <input value={name} id="emailAddress" type="text" className="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-200 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 focus:ring-blue-300 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring" />
+                                    <input value={tags} onChange={event => { setTags(event?.target.value); handleChange() }} id="emailAddress" type="text" className="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-200 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 focus:ring-blue-300 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring" />
                                 </div>
 
                                 <div className="w-72 mt-4 top-16">

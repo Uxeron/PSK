@@ -3,12 +3,13 @@ import { ItemCategory, ItemCondition, UploadData } from "./model";
 export const initialUploadData: UploadData = {
     name: null,
     description: null,
-    image: null,
     condition: null,
     category: null,
-    uploadDate: null,
+    isToGiveAway: null,
     userId: null,
     addressId: null,
+    tags: null,
+    image: null,
 }
 
 export const itemCategoryMap = {

@@ -1,12 +1,13 @@
 export type UploadData = {
     name: string | null,
     description: string | null,
-    image: string | null,
     condition: ItemCondition | null,
     category: ItemCategory | null,
-    uploadDate: Date | null,
+    isToGiveAway: boolean | null,
     userId: string | null,
     addressId: string | null,
+    tags: string | null,
+    image: string | null,
 }
 
 export enum ItemCondition {
