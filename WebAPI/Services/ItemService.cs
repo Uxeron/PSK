@@ -46,6 +46,12 @@ public class ItemService : IItemService
         return itemEntity;
     }
 
+    public async Task CreateItem(Item item)
+    {
+        await _context.Items.AddAsync(item);
+        await _context.SaveChangesAsync();
+    }
+
     public async Task<Item?> GetItem(Guid id)
     {
         return await _context.Items.Where(i => i.ItemId == id).FirstOrDefaultAsync();
