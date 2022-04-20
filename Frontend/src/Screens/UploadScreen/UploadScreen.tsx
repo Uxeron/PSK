@@ -50,7 +50,7 @@ export const UploadScreen = () => {
             return false
         }
         setOnLoad(true);
-        ItemService.upload(uploadData);
+        ItemService.upload(uploadData, navigate);
         toast('Your item is being processed at the moment.', {
             position: "top-right",
             autoClose: 5000,
