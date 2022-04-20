@@ -1,5 +1,6 @@
 using Data;
 using WebAPI.Services;
+using WebAPI.Services.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,6 +15,7 @@ services.AddSwaggerGen();
 services.AddDbContext<PskContext>();
 
 services.AddScoped<IItemService, ItemService>();
+services.AddScoped<IAddressService, AddressService>();
 services.AddScoped<IUserService, UserService>();
 
 var app = builder.Build();

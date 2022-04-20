@@ -2,7 +2,7 @@
 
 using Data.Models.Item;
 using Microsoft.AspNetCore.Mvc;
-using WebAPI.Services;
+using WebAPI.Services.Interfaces;
 
 [Route("api/[controller]")]
 [ApiController]
@@ -19,5 +19,12 @@ public class ItemController : ControllerBase
     public async Task<Item?> GetItem(Guid id)
     {
         return await _itemService.GetItem(id);
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> CreateItem([FromBody] PartialItem item)
+    {
+        Guid itemId = await _itemService.CreateItem(item);
+        return Ok(itemId);
     }
 }
