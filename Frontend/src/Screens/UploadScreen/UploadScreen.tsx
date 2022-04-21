@@ -24,14 +24,31 @@ export const UploadScreen = () => {
     const [location, setLocation] = useState(mockLocation[0])
     const [openFileSelector, { filesContent, loading, errors }] = useFilePicker({
         readAs: "DataURL",
-        accept: "image/*",
+        accept: ['.png', '.jpg', '.jpeg'],
         multiple: true,
         limitFilesConfig: { max: 5 },
         maxFileSize: 50,
     });
+    //validation states:
+    const [isNameValid, setIsNameValid] = useState(true);
+    const [isDescriptionValid, setIsDescriptionValid] = useState(true);
+    const [isImageMissing, setIsImageMissing] = useState(false)
 
     const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
+        if(!areFieldsValid() || name.length === 0 || description.length === 0 || filesContent.length === 0){
+            if(name.length === 0) {
+                setIsNameValid(false)
+            }
+            if(description.length === 0) {
+                setIsDescriptionValid(false)
+            }
+            if(filesContent.length === 0) {
+                setIsImageMissing(true)
+                
+            }
+            return false
+        }
         setOnLoad(true);
         ItemService.upload(uploadData);
         toast('Your item is being processed at the moment.', {
@@ -65,6 +82,25 @@ export const UploadScreen = () => {
 
     useEffect(() => applyValuesToState(), [filesContent, name, description, selectedCategory, selectedCondition, location])
 
+    useEffect(() => setIsImageMissing(false), [filesContent.length])
+
+    const areFieldsValid = () => {
+        return isNameValid && isDescriptionValid && !isImageMissing;
+    }
+
+    useEffect(() => {
+        if (!areFieldsValid() && !toast.isActive("validationToast")) {
+            toast.error(`Following fields can't be empty or contain special characters`, {
+            toastId: "validationToast",
+            position: "top-center",
+            autoClose: false,
+            hideProgressBar: true,
+            closeOnClick: true,
+            draggable: true,
+        })}
+        else if(areFieldsValid()) toast.dismiss("validationToast")
+    }, [isNameValid, isDescriptionValid, isImageMissing])
+
     if (loading || onLoad) {
         return <Spinner />
     }
@@ -73,6 +109,14 @@ export const UploadScreen = () => {
         return <div>Error...</div>
     }
 
+    const isFieldValid = (value: string, isRequired: boolean) => {
+        const format = /[`!@#$%^&*()_+\-=\\[\]{};':"\\|,.<>\\/?~]/;
+        if (isRequired && value.length === 0) {
+            return false
+        }
+
+        return !format.test(value)
+    }
 
     return (
         <form onSubmit={handleSubmit}>
@@ -91,13 +135,15 @@ export const UploadScreen = () => {
                                 <label className="text-gray-700 dark:text-gray-200" htmlFor="name">
                                     {t.uploadScreen.card1.nameLabel}
                                 </label>
-                                <input value={name} onChange={event => { setName(event?.target.value); handleChange() }} id="emailAddress" type="text" className="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-200 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 focus:ring-blue-300 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring" />
+                                <input value={name} onBlur={(event) => setIsNameValid(isFieldValid(event?.target.value, true))} onChange={event => { setName(event?.target.value); handleChange() }} id="emailAddress" type="text"
+                                    className={`block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-200 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 focus:ring-blue-300 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring ${isNameValid ? '' : 'border-red-500 border-4'}`} />
 
                                 <div className="mt-4 top-16">
                                     <label className="text-gray-700 dark:text-gray-200" htmlFor="name">
                                         {t.uploadScreen.card1.descriptionLabel}
                                     </label>
-                                    <textarea value={description} onChange={event => { setDescription(event?.target.value); handleChange() }} className="block w-full h-20 px-4 py-2 text-gray-700 bg-white border rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 dark:focus:border-blue-300 focus:outline-none focus:ring focus:ring-blue-300 focus:ring-opacity-40" />
+                                    <textarea value={description} onBlur={(event) => setIsDescriptionValid(isFieldValid(event?.target.value, true))} onChange={event => { setDescription(event?.target.value); handleChange() }}
+                                        className={`block w-full h-20 px-4 py-2 text-gray-700 bg-white border rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 dark:focus:border-blue-300 focus:outline-none focus:ring focus:ring-blue-300 focus:ring-opacity-40 ${isDescriptionValid ? '' : 'border-red-500 border-4'}`} />
                                 </div>
 
                                 <div className="w-72 mt-4 top-16">
@@ -144,7 +190,7 @@ export const UploadScreen = () => {
                                 <label className="">
                                     {t.uploadScreen.card2.label}
                                 </label>
-                                <div onClick={() => openFileSelector()} className="h-48 w-full flex justify-center items-center cursor-pointer self-center border-4 border-dashed bg-white rounded-lg dark:bg-gray-800">
+                                <div onClick={() => openFileSelector()} className={`h-48 w-full flex justify-center items-center cursor-pointer self-center border-4 border-dashed bg-white rounded-lg dark:bg-gray-800 ${isImageMissing ? 'border-red-500' : ''}`}>
                                     {filesContent.length === 0 ? <h2 className="top-1/2 text-1xl font-bold text-gray-400 dark:text-white md:text-2xl">
                                         {t.uploadScreen.card2.input[0]} <span className="text-blue-400 dark:text-blue-400">{t.uploadScreen.card2.input[1]}</span>
                                     </h2> :
