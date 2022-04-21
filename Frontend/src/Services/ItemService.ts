@@ -5,8 +5,8 @@ import { UploadData } from '../Data/model';
 
 class ItemService {
     async upload(data: UploadData) {
-        return http.post<UploadData>(`${BASE_URL}/api/jsonBlob`, data).then(
-            () => toast.success("Item was successfully uploaded")
+        return http.post<UploadData>(`${BASE_URL}/Item`, JSON.stringify(data)).then(
+            (res) => res.status === 200 ? toast.success("Item was successfully uploaded") : toast.error(`Error code: ${res.status}`)
         );
     }
 }
