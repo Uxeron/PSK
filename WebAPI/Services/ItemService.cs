@@ -2,7 +2,10 @@
 
 using Data;
 using Data.Models;
+using Data.Requests;
+using Data.Wrappers;
 using Microsoft.EntityFrameworkCore;
+using SFKR.Request;
 using WebAPI.Models;
 using WebAPI.Services.Interfaces;
 
@@ -56,5 +59,59 @@ public class ItemService : IItemService
     public async Task<Item?> GetItem(Guid id)
     {
         return await _context.Items.Where(i => i.ItemId == id).FirstOrDefaultAsync();
+    }
+
+    public async Task<List<Item>> GetItems()
+    {
+        return await _context.Items.Include(x => x.Address).ToListAsync();
+    }
+
+    public async Task<Paged<ItemBrowserPageDto>?> GetItemsForBrowserPage(ItemsPageQuery filters, PagingQuery paging)
+    {
+        var itemsForBrowserPage = await GetItems();
+
+        IEnumerable<ItemBrowserPageDto>? itemDtos = null;
+
+        if (itemsForBrowserPage == null)
+        {
+            return null;
+        }
+
+        itemDtos = itemsForBrowserPage
+            .Select(i => new ItemBrowserPageDto
+            {
+                ItemId = i.ItemId,
+                Name = i.Name,
+                Description = i.Description,
+                Image = "TODO", // TODO PSK-50
+                Condition = i.Condition,
+                Category = i.Category,
+                UploadDate = i.UploadDate,
+                City = i.Address?.City,
+            });
+
+        int count = itemDtos.Count();
+
+        itemDtos = Filter(filters, itemDtos);
+        itemDtos = itemDtos.Skip((paging.Page - 1) * paging.ItemsPerPage).Take(paging.ItemsPerPage);
+
+        var paged = new Paged<ItemBrowserPageDto>(itemDtos, paging.Page, count, paging.ItemsPerPage);
+        return paged;
+    }
+
+    private IEnumerable<ItemBrowserPageDto> Filter(ItemsPageQuery filters, IEnumerable<ItemBrowserPageDto> itemDtos)
+    {
+        if (!String.IsNullOrEmpty(filters.City))
+        {
+            filters.City = filters.City.ToLower();
+            itemDtos = itemDtos.Where(dto => !String.IsNullOrEmpty(dto.City) && dto.City.ToLower().Contains(filters.City));
+        }
+        if (!String.IsNullOrEmpty(filters.Category))
+        {
+            filters.Category = filters.Category.ToLower();
+            itemDtos = itemDtos.Where(dto => dto.Category.ToString().ToLower().Contains(filters.Category));
+        }
+
+        return itemDtos;
     }
 }
