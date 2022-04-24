@@ -2,7 +2,7 @@
 
 using Data.Enums;
 
-public class Item
+public class ItemBrowserPageDto
 {
     public Guid ItemId { get; set; }
     public string Name { get; set; } = string.Empty;

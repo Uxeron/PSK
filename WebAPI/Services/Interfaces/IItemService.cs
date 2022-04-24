@@ -3,7 +3,7 @@ namespace WebAPI.Services.Interfaces;
 using System;
 using System.Threading.Tasks;
 using Data.Models;
-using Data.Wrappers;
+using WebAPI.Models;
 
 public interface IItemService
 {
