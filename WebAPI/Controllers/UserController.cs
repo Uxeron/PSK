@@ -2,7 +2,7 @@
 
 using Data.Models;
 using Microsoft.AspNetCore.Mvc;
-using WebAPI.Services;
+using WebAPI.Services.Interfaces;
 
 [Route("api/[controller]")]
 [ApiController]
@@ -31,6 +31,6 @@ public class UserController : ControllerBase
     public async Task<IActionResult> CreateUser([FromBody] User user)
     {
         await _userService.CreateUser(user);
-        return NoContent();
+        return Ok();
     }
 }
