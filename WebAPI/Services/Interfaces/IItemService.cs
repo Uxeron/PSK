@@ -2,11 +2,15 @@ namespace WebAPI.Services.Interfaces;
 
 using System;
 using System.Threading.Tasks;
-using Data.Models.Item;
+using Data.Models;
+using Data.Requests;
+using Data.Wrappers;
+using SFKR.Request;
+using WebAPI.Models;
 
 public interface IItemService
 {
-    Task CreateItem(Item item);
     Task<Item?> GetItem(Guid id);
     Task<Guid> CreateItem(PartialItem item);
+    Task<Paged<ItemBrowserPageDto>?> GetItemsForBrowserPage(ItemsPageQuery filters, PagingQuery paging);
 }

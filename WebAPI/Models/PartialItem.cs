@@ -1,4 +1,6 @@
-﻿namespace Data.Models.Item;
+﻿namespace WebAPI.Models;
+
+using Data.Enums;
 
 public class PartialItem
 {

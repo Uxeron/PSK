@@ -1,7 +1,6 @@
 ﻿namespace Data;
 
 using Data.Models;
-using Data.Models.Item;
 using Microsoft.EntityFrameworkCore;
 
 public class PskContext : DbContext

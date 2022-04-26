@@ -1,4 +1,6 @@
-﻿namespace Data.Models.Item;
+﻿namespace Data.Models;
+
+using Data.Enums;
 
 public class Item
 {

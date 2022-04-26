@@ -6,6 +6,5 @@ public class Image
     public byte[] ImageData { get; set; } = new byte[0];
     public string Name { get; set; } = string.Empty;
 
-    public Item.Item Item { get; set; } = new Item.Item();
-
+    public Item Item { get; set; } = new Item();
 }

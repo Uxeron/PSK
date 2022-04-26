@@ -1,4 +1,4 @@
-﻿namespace Data.Models.Item;
+﻿namespace Data.Enums;
 
 public enum ItemCategory
 {
