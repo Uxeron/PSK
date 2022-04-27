@@ -63,10 +63,13 @@ public class ItemService : IItemService
                 byte[] imageBytes = Convert.FromBase64String(imagesData[i + 1]);
                 byte[] resizedImage = ResizeImage(imageBytes);
 
-                imageEntity.Name = imageName;
-                imageEntity.Prefix = imagesData[i];
-                imageEntity.ImageData = imageBytes; 
-                imageEntity.ThumbnailImageData = resizedImage;
+                var imageEntity = new Data.Models.Image() 
+                {
+                    Name = imageName,
+                    Prefix = imagesData[i],
+                    ImageData = imageBytes,
+                    ThumbnailImageData = resizedImage,
+                };
 
                 await _context.Images.AddAsync(imageEntity);
                
