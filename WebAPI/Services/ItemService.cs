@@ -140,7 +140,7 @@ public class ItemService : IItemService
                 ItemId = i.ItemId,
                 Name = i.Name,
                 Description = i.Description,
-                Image = "TODO", // TODO PSK-50
+                Image = ConvertBytesToBase64(i.Images.First().ThumbnailImageData),
                 Condition = i.Condition,
                 Category = i.Category,
                 UploadDate = i.UploadDate,
