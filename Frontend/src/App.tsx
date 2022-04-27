@@ -1,7 +1,7 @@
 import React from 'react';
 import { ToastContainer } from 'react-toastify';
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
-import { BrowseScreen } from './Screens/BrowseScreen';
+import { BrowseScreen } from './Screens/BrowseScreen/BrowseScreen';
 import { DetailsScreen } from './Screens/DetailsScreen';
 import { NotFound } from './Screens/NotFound';
 import { UploadScreen } from './Screens/UploadScreen/UploadScreen';
