@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using SFKR.Request;
 using WebAPI.Models;
 using WebAPI.Services.Interfaces;
+using System.Drawing;
 
 public class ItemService : IItemService
 {
@@ -44,16 +45,65 @@ public class ItemService : IItemService
         itemEntity.IsToGiveAway = partialItem.IsToGiveAway;
         itemEntity.User = _userService.GetUser(partialItem.AddressId).Result;
         itemEntity.UploadDate = DateTime.Now;
-
-        // itemEntity.Images = partialItem.Images; // TODO: PSK-50
+        itemEntity.Images = SaveImages(partialItem.Name, partialItem.Image).Result;
 
         return itemEntity;
     }
 
-    public async Task CreateItem(Item item)
+    private async Task<List<Data.Models.Image>> SaveImages(string imageName, string imageData) //Image name - uploaded item name
     {
-        await _context.Items.AddAsync(item);
+        string[] imagesData = SplitBase64String(imageData);
+        var images = new List<Data.Models.Image>();
+
+        for (int i = 0; i < imagesData.Length; i++)
+        {
+            Data.Models.Image imageEntity = new Data.Models.Image();
+            if (imagesData[i].StartsWith("data:image/"))
+            {
+                byte[] imageBytes = Convert.FromBase64String(imagesData[i + 1]);
+                byte[] resizedImage = ResizeImage(imageBytes);
+
+                var imageEntity = new Data.Models.Image() 
+                {
+                    Name = imageName,
+                    Prefix = imagesData[i],
+                    ImageData = imageBytes,
+                    ThumbnailImageData = resizedImage,
+                };
+
+                await _context.Images.AddAsync(imageEntity);
+               
+                images.Add(imageEntity);
+                i++;
+            }
+        }
+
         await _context.SaveChangesAsync();
+        return images;
+
+    }
+
+    private static byte[] ResizeImage(byte[] byteImageIn)
+    {
+        Bitmap startBitmap;
+        using (var ms = new MemoryStream(byteImageIn))
+        {
+            startBitmap = new Bitmap(ms);
+        }
+
+        Bitmap newBitmap = new Bitmap((startBitmap.Width * 400) / startBitmap.Height, 400);
+        using (Graphics graphics = Graphics.FromImage(newBitmap))
+        {
+            graphics.DrawImage(startBitmap, new Rectangle(0, 0, (startBitmap.Width * 400) / startBitmap.Height, 400), new Rectangle(0, 0, startBitmap.Width, startBitmap.Height), GraphicsUnit.Pixel);
+        }
+
+        ImageConverter converter = new ImageConverter();
+        return (byte[])converter.ConvertTo(newBitmap, typeof(byte[]));
+    }
+
+    private string[] SplitBase64String(String imageData)
+    {
+        return imageData.Split(',');
     }
 
     public async Task<Item?> GetItem(Guid id)
@@ -83,7 +133,7 @@ public class ItemService : IItemService
                 ItemId = i.ItemId,
                 Name = i.Name,
                 Description = i.Description,
-                Image = "TODO", // TODO PSK-50
+                Image = Convert.ToBase64String(i.Images.First().ThumbnailImageData),
                 Condition = i.Condition,
                 Category = i.Category,
                 UploadDate = i.UploadDate,
