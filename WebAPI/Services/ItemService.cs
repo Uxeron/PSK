@@ -8,7 +8,9 @@ using Microsoft.EntityFrameworkCore;
 using SFKR.Request;
 using WebAPI.Models;
 using WebAPI.Services.Interfaces;
-using System.Drawing;
+using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.Processing;
+using SixLabors.ImageSharp.Formats.Jpeg;
 
 public class ItemService : IItemService
 {
@@ -77,20 +79,15 @@ public class ItemService : IItemService
 
     private static byte[] ResizeImage(byte[] byteImageIn)
     {
-        Bitmap startBitmap;
-        using (var ms = new MemoryStream(byteImageIn))
-        {
-            startBitmap = new Bitmap(ms);
-        }
+        using var image = SixLabors.ImageSharp.Image.Load(byteImageIn);
 
-        Bitmap newBitmap = new Bitmap((startBitmap.Width * 400) / startBitmap.Height, 400);
-        using (Graphics graphics = Graphics.FromImage(newBitmap))
-        {
-            graphics.DrawImage(startBitmap, new Rectangle(0, 0, (startBitmap.Width * 400) / startBitmap.Height, 400), new Rectangle(0, 0, startBitmap.Width, startBitmap.Height), GraphicsUnit.Pixel);
-        }
+        const int height = 400;
+        var width = (image.Width * height) / image.Height;
+        image.Mutate(x => x.Resize(width, height));
 
-        ImageConverter converter = new ImageConverter();
-        return (byte[])converter.ConvertTo(newBitmap, typeof(byte[]));
+        using var ms = new MemoryStream();
+        image.Save(ms, new JpegEncoder());
+        return ms.ToArray();
     }
 
     public async Task<Item?> GetItem(Guid id) => 
