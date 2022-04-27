@@ -7,8 +7,8 @@ using Data.Wrappers;
 using Microsoft.EntityFrameworkCore;
 using SFKR.Request;
 using WebAPI.Models;
-using Data.Models.Item;
 using WebAPI.Services.Interfaces;
+using System.Drawing;
 
 public class ItemService : IItemService
 {
@@ -45,48 +45,70 @@ public class ItemService : IItemService
         itemEntity.IsToGiveAway = partialItem.IsToGiveAway;
         itemEntity.User = _userService.GetUser(partialItem.AddressId).Result;
         itemEntity.UploadDate = DateTime.Now;
-
-        // itemEntity.Images = partialItem.Images; // TODO: PSK-50
+        itemEntity.Images = SaveImages(partialItem.Name, partialItem.Image).Result;
 
         return itemEntity;
     }
 
-    public async Task CreateItem(Item item)
+    private async Task<List<Data.Models.Image>> SaveImages(String imageName, String imageData) //Image name - uploaded item name
     {
-        await _context.Items.AddAsync(item);
-        await _context.SaveChangesAsync();
-    }
+        string[] imagesData = SplitBase64String(imageData);
+        List<Data.Models.Image> images = new List<Data.Models.Image>();
 
-    private async void saveImages(String imageName, String imageData) //Image name - uploaded item name
-    {
-        string[] imagesData = splitBase64String(imageData);
-
-        foreach (var data in imagesData)
+        for (int i = 0; i < imagesData.Length; i++)
         {
-            Image imageEntity = new Image();
-            byte[] imageBytes = convertBase64ToBytes(data);
+            Data.Models.Image imageEntity = new Data.Models.Image();
+            if (imagesData[i].StartsWith("data:image/"))
+            {
+                byte[] imageBytes = ConvertBase64ToBytes(imagesData[i + 1]);
+                byte[] resizedImage = ResizeImage(imageBytes);
 
-            imageEntity.Name = imageName;
-            imageEntity.ImageData = imageBytes;
+                imageEntity.Name = imageName;
+                imageEntity.Prefix = imagesData[i];
+                imageEntity.ImageData = imageBytes; 
+                imageEntity.ThumbnailImageData = resizedImage;
 
-            await _context.Images.AddAsync(imageEntity);
-            await _context.SaveChangesAsync();
+                await _context.Images.AddAsync(imageEntity);
+               
+                images.Add(imageEntity);
+                i++;
+            }
         }
 
+        await _context.SaveChangesAsync();
+        return images;
+
     }
 
-    private string[] splitBase64String(String imageData)
+    private byte[] ResizeImage(byte[] byteImageIn)
     {
-        return String.Join("", imageData.Split(','))
-            .Split(new string[] { "data:image/jpeg;base64", "data:image/png;base64" }, StringSplitOptions.RemoveEmptyEntries);
+        Bitmap startBitmap;
+        using (var ms = new MemoryStream(byteImageIn))
+        {
+            startBitmap = new Bitmap(ms);
+        }
+
+        Bitmap newBitmap = new Bitmap((startBitmap.Width * 400) / startBitmap.Height, 400);
+        using (Graphics graphics = Graphics.FromImage(newBitmap))
+        {
+            graphics.DrawImage(startBitmap, new Rectangle(0, 0, (startBitmap.Width * 400) / startBitmap.Height, 400), new Rectangle(0, 0, startBitmap.Width, startBitmap.Height), GraphicsUnit.Pixel);
+        }
+
+        ImageConverter converter = new ImageConverter();
+        return (byte[])converter.ConvertTo(newBitmap, typeof(byte[]));
     }
 
-    private byte[] convertBase64ToBytes(String encodedImage)
+    private string[] SplitBase64String(String imageData)
+    {
+        return imageData.Split(',');
+    }
+
+    private byte[] ConvertBase64ToBytes(String encodedImage)
     {
         return Convert.FromBase64String(encodedImage);
     }
 
-    private String convertBytesToBase64(byte[] imageBytes)
+    private String ConvertBytesToBase64(byte[] imageBytes)
     {
         return Convert.ToBase64String(imageBytes);
     }
