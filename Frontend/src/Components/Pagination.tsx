@@ -8,7 +8,6 @@ type Props = {
 
 export const Pagination = (props: Props) => {
     const { currentPage, amountOfPages, setCurrentPage } = props;
-    console.log(amountOfPages)
 
     return (
         <div className="flex mx-auto place-content-center mb-6">

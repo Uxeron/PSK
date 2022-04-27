@@ -4,7 +4,7 @@ import { BASE_URL } from '../Common/constants';
 import http from "../Common/http-common";
 import { UploadData } from '../Data/model';
 
-type getAllProps = {
+type GetAllProps = {
     city?: string,
     category?: string,
     page?: number,
@@ -19,10 +19,8 @@ class ItemService {
             }) : toast.error(`Error code: ${res.status}`)
         );
     }
-    async getAll(props?: getAllProps) {
-        console.log(props)
+    async getAll(props?: GetAllProps) {
         const url = `${BASE_URL}/Item${props ? `?` : ``}${props?.city ? `City=${props.city}&` : ``}${!props?.category ? `` : (props?.category == "All") ? `` : `Category=${props?.category}&`}${props?.page ? `Page=${props.page}&` : ``}ItemsPerPage=12`
-        console.log(url)
         return http.get(url).then((res) => { return res.data });
     }
     async getById(id: string) {
