@@ -57,7 +57,6 @@ public class ItemService : IItemService
 
         for (int i = 0; i < imagesData.Length; i++)
         {
-            Data.Models.Image imageEntity = new Data.Models.Image();
             if (imagesData[i].StartsWith("data:image/"))
             {
                 byte[] imageBytes = Convert.FromBase64String(imagesData[i + 1]);
