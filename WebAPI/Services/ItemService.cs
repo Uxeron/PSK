@@ -7,6 +7,7 @@ using Data.Wrappers;
 using Microsoft.EntityFrameworkCore;
 using SFKR.Request;
 using WebAPI.Models;
+using Data.Models.Item;
 using WebAPI.Services.Interfaces;
 
 public class ItemService : IItemService
