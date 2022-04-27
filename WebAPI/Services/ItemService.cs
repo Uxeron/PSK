@@ -70,12 +70,12 @@ public class ItemService : IItemService
     {
         var itemsForBrowserPage = await GetItems();
 
-        IEnumerable<ItemBrowserPageDto>? itemDtos = null;
-
         if (itemsForBrowserPage == null)
         {
             return null;
         }
+
+        IEnumerable<ItemBrowserPageDto>? itemDtos = null;
 
         itemDtos = itemsForBrowserPage
             .Select(i => new ItemBrowserPageDto
@@ -116,5 +116,37 @@ public class ItemService : IItemService
         }
 
         return itemDtos;
+    }
+
+    public async Task<ItemDetailsScreenDto?> GetItemForDetailsScreen(Guid id)
+    {
+        var item = await GetItem(id);
+
+        if(item == null)
+        {
+            return null;
+        }
+
+        var itemDto = new ItemDetailsScreenDto();
+
+        itemDto =  new ItemDetailsScreenDto
+            {
+                ItemId = item.ItemId,
+                Name = item.Name,
+                Description = item.Description,
+                Condition = item.Condition,
+                Category = item.Category,
+                IsToGiveAway = item.IsToGiveAway,
+                IsTakenAway = DateTime.Today < item.From && item.From < DateTime.Today,
+                To = item.To,
+                UploadDate = item.UploadDate,
+                UpdateDate = item.UpdateDate,
+                Images = item.Images,
+                Country = item.Address?.Country,
+                City = item.Address?.City,
+                StreetName = item.Address?.StreetName,
+        };
+
+        return itemDto;
     }
 }

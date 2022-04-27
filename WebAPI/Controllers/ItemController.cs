@@ -20,7 +20,7 @@ public class ItemController : ControllerBase
     }
 
     [HttpGet("{id}")]
-    public async Task<Item?> GetItem(Guid id)
+    public async Task<Item?> GetItem([FromRoute] Guid id)
     {
         return await _itemService.GetItem(id);
     }
@@ -36,5 +36,11 @@ public class ItemController : ControllerBase
     public async Task<Paged<ItemBrowserPageDto>?> GetItemsForBrowserPage([FromQuery] ItemsPageQuery filters, [FromQuery] PagingQuery paging)
     {
         return await _itemService.GetItemsForBrowserPage(filters, paging);
+    }
+
+    [HttpGet("DetailsPage/{id}")]
+    public async Task<ItemDetailsScreenDto?> GetItemForDetailsScreen([FromRoute] Guid id)
+    {
+        return await _itemService.GetItemForDetailsScreen(id);
     }
 }

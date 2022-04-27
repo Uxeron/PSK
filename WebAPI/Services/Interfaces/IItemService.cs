@@ -11,6 +11,7 @@ using WebAPI.Models;
 public interface IItemService
 {
     Task<Item?> GetItem(Guid id);
+    Task<ItemDetailsScreenDto?> GetItemForDetailsScreen(Guid id);
     Task<Guid> CreateItem(PartialItem item);
     Task<Paged<ItemBrowserPageDto>?> GetItemsForBrowserPage(ItemsPageQuery filters, PagingQuery paging);
 }
