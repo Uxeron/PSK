@@ -58,12 +58,12 @@ public class ItemService : IItemService
 
     public async Task<Item?> GetItem(Guid id)
     {
-        return await _context.Items.Where(i => i.ItemId == id).FirstOrDefaultAsync();
+        return await _context.Items.Include(x => x.Address).Include(x => x.User).FirstOrDefaultAsync(x => x.ItemId == id);
     }
 
     public async Task<List<Item>> GetItems()
     {
-        return await _context.Items.Include(x => x.Address).ToListAsync();
+        return await _context.Items.Include(x => x.Address).Include(x => x.User).ToListAsync();
     }
 
     public async Task<Paged<ItemBrowserPageDto>?> GetItemsForBrowserPage(ItemsPageQuery filters, PagingQuery paging)

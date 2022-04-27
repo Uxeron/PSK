@@ -64,13 +64,13 @@ namespace Data.Migrations
                     b.ToTable("Image");
                 });
 
-            modelBuilder.Entity("Data.Models.Item.Item", b =>
+            modelBuilder.Entity("Data.Models.Item", b =>
                 {
                     b.Property<Guid>("ItemId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("TEXT");
 
-                    b.Property<Guid?>("AddressId")
+                    b.Property<Guid>("AddressId")
                         .HasColumnType("TEXT");
 
                     b.Property<int>("Category")
@@ -102,7 +102,7 @@ namespace Data.Migrations
                     b.Property<DateTime>("UploadDate")
                         .HasColumnType("TEXT");
 
-                    b.Property<Guid?>("UserId")
+                    b.Property<Guid>("UserId")
                         .HasColumnType("TEXT");
 
                     b.HasKey("ItemId");
@@ -152,7 +152,7 @@ namespace Data.Migrations
 
             modelBuilder.Entity("Data.Models.Image", b =>
                 {
-                    b.HasOne("Data.Models.Item.Item", "Item")
+                    b.HasOne("Data.Models.Item", "Item")
                         .WithMany("Images")
                         .HasForeignKey("ItemId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -161,15 +161,19 @@ namespace Data.Migrations
                     b.Navigation("Item");
                 });
 
-            modelBuilder.Entity("Data.Models.Item.Item", b =>
+            modelBuilder.Entity("Data.Models.Item", b =>
                 {
                     b.HasOne("Data.Models.Address", "Address")
                         .WithMany()
-                        .HasForeignKey("AddressId");
+                        .HasForeignKey("AddressId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("Data.Models.User", "User")
                         .WithMany()
-                        .HasForeignKey("UserId");
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Address");
 
@@ -185,7 +189,7 @@ namespace Data.Migrations
                     b.Navigation("Address");
                 });
 
-            modelBuilder.Entity("Data.Models.Item.Item", b =>
+            modelBuilder.Entity("Data.Models.Item", b =>
                 {
                     b.Navigation("Images");
                 });
