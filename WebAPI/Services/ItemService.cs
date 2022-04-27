@@ -93,15 +93,20 @@ public class ItemService : IItemService
         return (byte[])converter.ConvertTo(newBitmap, typeof(byte[]));
     }
 
-    public async Task<Item?> GetItem(Guid id)
-    {
-        return await _context.Items.Where(i => i.ItemId == id).FirstOrDefaultAsync();
-    }
+    public async Task<Item?> GetItem(Guid id) => 
+        await _context.Items
+            .Where(i => i.ItemId == id)
+            .Include(i => i.User)
+            .Include(i => i.Address)
+            .Include(i => i.Images)
+            .FirstOrDefaultAsync();
 
-    public async Task<List<Item>> GetItems()
-    {
-        return await _context.Items.Include(x => x.Address).ToListAsync();
-    }
+    public async Task<List<Item>> GetItems() =>
+        await _context.Items
+            .Include(i => i.User)
+            .Include(x => x.Address)
+            .Include(x => x.Images)
+            .ToListAsync();
 
     public async Task<Paged<ItemBrowserPageDto>?> GetItemsForBrowserPage(ItemsPageQuery filters, PagingQuery paging)
     {
@@ -118,7 +123,7 @@ public class ItemService : IItemService
                 ItemId = i.ItemId,
                 Name = i.Name,
                 Description = i.Description,
-                Image = Convert.ToBase64String(i.Images.First().ThumbnailImageData),
+                Image = i.Images.Any() ? Convert.ToBase64String(i.Images.First().ThumbnailImageData) : string.Empty,
                 Condition = i.Condition,
                 Category = i.Category,
                 UploadDate = i.UploadDate,
