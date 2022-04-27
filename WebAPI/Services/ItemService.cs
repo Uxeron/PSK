@@ -90,9 +90,12 @@ public class ItemService : IItemService
                 City = i.Address?.City,
             });
 
-        int count = itemDtos.Count();
+        
 
         itemDtos = Filter(filters, itemDtos);
+
+        int count = itemDtos.Count();
+
         itemDtos = itemDtos.Skip((paging.Page - 1) * paging.ItemsPerPage).Take(paging.ItemsPerPage);
 
         var paged = new Paged<ItemBrowserPageDto>(itemDtos, paging.Page, count, paging.ItemsPerPage);
