@@ -12,5 +12,5 @@ public class PartialItem
     public Guid UserId { get; set; }
     public Guid AddressId { get; set; }
     public String? Tags { get; set; } // TODO PSK-58
-    public String? Image { get; set; } // TODO PSK-50
+    public String Image { get; set; } = String.Empty;
 }
