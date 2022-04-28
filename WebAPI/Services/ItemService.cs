@@ -4,6 +4,7 @@ using Data;
 using Data.Models;
 using Data.Requests;
 using Data.Wrappers;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SFKR.Request;
 using WebAPI.Models;
@@ -56,15 +57,20 @@ public class ItemService : IItemService
         await _context.SaveChangesAsync();
     }
 
-    public async Task<Item?> GetItem(Guid id)
-    {
-        return await _context.Items.Include(x => x.Address).Include(x => x.User).FirstOrDefaultAsync(x => x.ItemId == id);
-    }
+    public async Task<Item?> GetItem(Guid id) => 
+        await _context.Items
+            .Where(i => i.ItemId == id)
+            .Include(i => i.User)
+            .Include(i => i.Address)
+            .Include(i => i.Images)
+            .FirstOrDefaultAsync();
 
-    public async Task<List<Item>> GetItems()
-    {
-        return await _context.Items.Include(x => x.Address).Include(x => x.User).ToListAsync();
-    }
+    public async Task<List<Item>> GetItems() =>
+        await _context.Items
+            .Include(i => i.User)
+            .Include(x => x.Address)
+            .Include(x => x.Images)
+            .ToListAsync();
 
     public async Task<Paged<ItemBrowserPageDto>?> GetItemsForBrowserPage(ItemsPageQuery filters, PagingQuery paging)
     {
@@ -148,5 +154,31 @@ public class ItemService : IItemService
         };
 
         return itemDto;
+    }
+
+    public async Task UpdateItem(ItemRequest itemRequest, Item item)
+    {
+        var updatedItem = MapDtoToModel(itemRequest);
+        _context.Entry(item).State = EntityState.Detached;
+        _context.Entry(updatedItem).State = EntityState.Modified;
+        await _context.SaveChangesAsync();
+    }
+
+    private Item MapDtoToModel(ItemRequest itemRequest)
+    {
+        return new Item
+        {
+            ItemId = itemRequest.ItemId,
+            Name = itemRequest.Name,
+            Description = itemRequest.Description,
+            Condition = itemRequest.Condition,
+            Category = itemRequest.Category,
+            IsToGiveAway = itemRequest.IsToGiveAway,
+            From = itemRequest.From,
+            To = itemRequest.To,
+            UploadDate = itemRequest.UploadDate,
+            UpdateDate = DateTime.Today,
+            Images = itemRequest.Images,
+        };
     }
 }

@@ -43,4 +43,22 @@ public class ItemController : ControllerBase
     {
         return await _itemService.GetItemForDetailsScreen(id);
     }
+
+    [HttpPut("{id}")]
+    public async Task<IActionResult> UpdateItem([FromRoute] Guid id, [FromBody] ItemRequest itemRequest)
+    {
+        if (id != itemRequest.ItemId)
+        {
+            return BadRequest();
+        }
+
+        var item = await _itemService.GetItem(id);
+        if (item == null)
+        {
+            return NotFound("Item with this id does not exist");
+        }
+
+        await _itemService.UpdateItem(itemRequest, item);
+        return Ok();
+    }
 }
