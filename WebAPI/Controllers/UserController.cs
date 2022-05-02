@@ -22,7 +22,7 @@ public class UserController : ControllerBase
     }
 
     [HttpGet("{id}")]
-    public async Task<User> GetUser(Guid id)
+    public async Task<User?> GetUser(Guid id)
     {
         return await _userService.GetUser(id);
     }

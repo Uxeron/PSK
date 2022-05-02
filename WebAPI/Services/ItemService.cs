@@ -8,7 +8,9 @@ using Microsoft.EntityFrameworkCore;
 using SFKR.Request;
 using WebAPI.Models;
 using WebAPI.Services.Interfaces;
-using System.Drawing;
+using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.Processing;
+using SixLabors.ImageSharp.Formats.Jpeg;
 
 public class ItemService : IItemService
 {
@@ -25,7 +27,7 @@ public class ItemService : IItemService
 
     public async Task<Guid> CreateItem(PartialItem partialItem)
     {
-        Item item = BuildItemEntity(partialItem);
+        var item = BuildItemEntity(partialItem);
 
         await _context.Items.AddAsync(item);
         await _context.SaveChangesAsync();
@@ -33,113 +35,96 @@ public class ItemService : IItemService
         return item.ItemId;
     }
 
-    private Item BuildItemEntity(PartialItem partialItem)    
-    {
-        Item itemEntity = new Item();
-
-        itemEntity.Name = partialItem.Name;
-        itemEntity.Address = _addressService.GetAddress(partialItem.AddressId).Result;
-        itemEntity.Description = partialItem.Description;
-        itemEntity.Condition = partialItem.Condition;
-        itemEntity.Category = partialItem.Category;
-        itemEntity.IsToGiveAway = partialItem.IsToGiveAway;
-        itemEntity.User = _userService.GetUser(partialItem.AddressId).Result;
-        itemEntity.UploadDate = DateTime.Now;
-        itemEntity.Images = SaveImages(partialItem.Name, partialItem.Image).Result;
-
-        return itemEntity;
-    }
+    private Item BuildItemEntity(PartialItem partialItem) => new()
+        {
+            Name = partialItem.Name,
+            Address = _addressService.GetAddress(partialItem.AddressId).Result,
+            Description = partialItem.Description,
+            Condition = partialItem.Condition,
+            Category = partialItem.Category,
+            IsToGiveAway = partialItem.IsToGiveAway,
+            User = _userService.GetUser(partialItem.AddressId).Result,
+            UploadDate = DateTime.Now,
+            Images = SaveImages(partialItem.Name, partialItem.Image).Result
+        };
 
     private async Task<List<Data.Models.Image>> SaveImages(string imageName, string imageData) //Image name - uploaded item name
     {
-        string[] imagesData = SplitBase64String(imageData);
+        var imagesData = imageData.Split(',');
         var images = new List<Data.Models.Image>();
+        var prefixes = imagesData.Where(i => i.StartsWith("data:image/"));
+        var imagesDataBase64 = imagesData.Except(prefixes);
 
-        for (int i = 0; i < imagesData.Length; i++)
+        foreach ((string prefix, string imageDataBase64) in prefixes.Zip(imagesDataBase64))
         {
-            if (imagesData[i].StartsWith("data:image/"))
+            var imageBytes = Convert.FromBase64String(imageDataBase64);
+            var resizedImage = ResizeImage(imageBytes);
+
+            var imageEntity = new Data.Models.Image()
             {
-                byte[] imageBytes = Convert.FromBase64String(imagesData[i + 1]);
-                byte[] resizedImage = ResizeImage(imageBytes);
+                Name = imageName,
+                Prefix = prefix,
+                ImageData = imageBytes,
+                ThumbnailImageData = resizedImage,
+            };
 
-                var imageEntity = new Data.Models.Image() 
-                {
-                    Name = imageName,
-                    Prefix = imagesData[i],
-                    ImageData = imageBytes,
-                    ThumbnailImageData = resizedImage,
-                };
-
-                await _context.Images.AddAsync(imageEntity);
-               
-                images.Add(imageEntity);
-                i++;
-            }
+            await _context.Images.AddAsync(imageEntity);
+            images.Add(imageEntity);
         }
 
-        await _context.SaveChangesAsync();
         return images;
 
     }
 
     private static byte[] ResizeImage(byte[] byteImageIn)
     {
-        Bitmap startBitmap;
-        using (var ms = new MemoryStream(byteImageIn))
-        {
-            startBitmap = new Bitmap(ms);
-        }
+        using var image = SixLabors.ImageSharp.Image.Load(byteImageIn);
 
-        Bitmap newBitmap = new Bitmap((startBitmap.Width * 400) / startBitmap.Height, 400);
-        using (Graphics graphics = Graphics.FromImage(newBitmap))
-        {
-            graphics.DrawImage(startBitmap, new Rectangle(0, 0, (startBitmap.Width * 400) / startBitmap.Height, 400), new Rectangle(0, 0, startBitmap.Width, startBitmap.Height), GraphicsUnit.Pixel);
-        }
+        const int height = 400;
+        var width = (image.Width * height) / image.Height;
+        image.Mutate(x => x.Resize(width, height));
 
-        ImageConverter converter = new ImageConverter();
-        return (byte[])converter.ConvertTo(newBitmap, typeof(byte[]));
+        using var ms = new MemoryStream();
+        image.Save(ms, new JpegEncoder());
+        return ms.ToArray();
     }
 
-    private string[] SplitBase64String(String imageData)
-    {
-        return imageData.Split(',');
-    }
+    public async Task<Item?> GetItem(Guid id) =>
+        await _context.Items
+            .Where(i => i.ItemId == id)
+            .Include(i => i.User)
+            .Include(i => i.Address)
+            .Include(i => i.Images)
+            .FirstOrDefaultAsync();
 
-    public async Task<Item?> GetItem(Guid id)
-    {
-        return await _context.Items.Where(i => i.ItemId == id).FirstOrDefaultAsync();
-    }
-
-    public async Task<List<Item>> GetItems()
-    {
-        return await _context.Items.Include(x => x.Address).ToListAsync();
-    }
+    public async Task<List<Item>> GetItems() =>
+        await _context.Items
+            .Include(i => i.User)
+            .Include(x => x.Address)
+            .Include(x => x.Images)
+            .ToListAsync();
 
     public async Task<Paged<ItemBrowserPageDto>?> GetItemsForBrowserPage(ItemsPageQuery filters, PagingQuery paging)
     {
         var itemsForBrowserPage = await GetItems();
-
-        IEnumerable<ItemBrowserPageDto>? itemDtos = null;
 
         if (itemsForBrowserPage == null)
         {
             return null;
         }
 
-        itemDtos = itemsForBrowserPage
+        var itemDtos = itemsForBrowserPage
             .Select(i => new ItemBrowserPageDto
             {
                 ItemId = i.ItemId,
                 Name = i.Name,
                 Description = i.Description,
-                Image = Convert.ToBase64String(i.Images.First().ThumbnailImageData),
+                Image = i.Images.Any() ? i.Images.First().Prefix + ',' + Convert.ToBase64String(i.Images.First().ThumbnailImageData) : string.Empty,
                 Condition = i.Condition,
                 Category = i.Category,
                 UploadDate = i.UploadDate,
                 City = i.Address?.City,
             });
-
-        
 
         itemDtos = Filter(filters, itemDtos);
 
@@ -151,14 +136,15 @@ public class ItemService : IItemService
         return paged;
     }
 
-    private IEnumerable<ItemBrowserPageDto> Filter(ItemsPageQuery filters, IEnumerable<ItemBrowserPageDto> itemDtos)
+    private static IEnumerable<ItemBrowserPageDto> Filter(ItemsPageQuery filters, IEnumerable<ItemBrowserPageDto> itemDtos)
     {
-        if (!String.IsNullOrEmpty(filters.City))
+        if (!string.IsNullOrEmpty(filters.City))
         {
             filters.City = filters.City.ToLower();
-            itemDtos = itemDtos.Where(dto => !String.IsNullOrEmpty(dto.City) && dto.City.ToLower().Contains(filters.City));
+            itemDtos = itemDtos.Where(dto => !string.IsNullOrEmpty(dto.City) && dto.City.ToLower().Contains(filters.City));
         }
-        if (!String.IsNullOrEmpty(filters.Category))
+
+        if (!string.IsNullOrEmpty(filters.Category))
         {
             filters.Category = filters.Category.ToLower();
             itemDtos = itemDtos.Where(dto => dto.Category.ToString().ToLower().Contains(filters.Category));

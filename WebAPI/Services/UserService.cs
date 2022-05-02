@@ -14,15 +14,13 @@ public class UserService : IUserService
         _context = context;
     }
 
-    public async Task<User?> GetUser(Guid id)
-    {
-        return await _context.Users.Where(i => i.UserId == id).FirstOrDefaultAsync();
-    }
+    public async Task<User?> GetUser(Guid id) => 
+        await _context.Users
+            .Where(i => i.UserId == id)
+            .FirstOrDefaultAsync();
 
-    public async Task<List<User>> GetUsers()
-    {
-        return await _context.Users.ToListAsync();
-    }
+    public async Task<List<User>> GetUsers() => 
+        await _context.Users.ToListAsync();
 
     public async Task CreateUser(User user)
     {
