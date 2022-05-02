@@ -7,6 +7,7 @@ using WebAPI.Models;
 using WebAPI.Services.Interfaces;
 using Data.Requests;
 using Data.Wrappers;
+using Microsoft.AspNetCore.Authorization;
 
 [Route("api/[controller]")]
 [ApiController]
@@ -25,7 +26,7 @@ public class ItemController : ControllerBase
         return await _itemService.GetItem(id);
     }
 
-    [HttpPost]
+    [HttpPost, Authorize] //Example how to add Authorize
     public async Task<IActionResult> CreateItem([FromBody] PartialItem item)
     {
         Guid itemId = await _itemService.CreateItem(item);
