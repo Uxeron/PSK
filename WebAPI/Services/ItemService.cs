@@ -90,7 +90,7 @@ public class ItemService : IItemService
         return ms.ToArray();
     }
 
-    public async Task<Item?> GetItem(Guid id) => 
+    public async Task<Item?> GetItem(Guid id) =>
         await _context.Items
             .Where(i => i.ItemId == id)
             .Include(i => i.User)
