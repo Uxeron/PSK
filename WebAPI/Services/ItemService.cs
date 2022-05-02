@@ -72,7 +72,6 @@ public class ItemService : IItemService
             images.Add(imageEntity);
         }
 
-        await _context.SaveChangesAsync();
         return images;
 
     }
@@ -120,7 +119,7 @@ public class ItemService : IItemService
                 ItemId = i.ItemId,
                 Name = i.Name,
                 Description = i.Description,
-                Image = i.Images.Any() ? Convert.ToBase64String(i.Images.First().ThumbnailImageData) : string.Empty,
+                Image = i.Images.Any() ? i.Images.First().Prefix + ',' + Convert.ToBase64String(i.Images.First().ThumbnailImageData) : string.Empty,
                 Condition = i.Condition,
                 Category = i.Category,
                 UploadDate = i.UploadDate,
