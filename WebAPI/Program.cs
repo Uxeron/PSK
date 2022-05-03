@@ -1,8 +1,13 @@
 using Data;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using WebAPI.Services;
 using WebAPI.Services.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme,
+        options => builder.Configuration.Bind("JwtSettings", options));
 
 // Add services to the container.
 var services = builder.Services;
