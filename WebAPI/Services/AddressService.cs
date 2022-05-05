@@ -13,8 +13,8 @@ public class AddressService : IAddressService
         _context = context;
     }
 
-    public async Task<Address?> GetAddress(Guid id)
-    {
-        return await _context.Address.Where(i => i.AddressId == id).FirstOrDefaultAsync();
-    } 
+    public async Task<Address?> GetAddress(Guid id) => 
+        await _context.Address
+            .Where(i => i.AddressId == id)
+            .FirstOrDefaultAsync();
 }

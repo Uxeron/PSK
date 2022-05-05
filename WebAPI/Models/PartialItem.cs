@@ -11,6 +11,6 @@ public class PartialItem
     public bool IsToGiveAway { get; set; }
     public Guid UserId { get; set; }
     public Guid AddressId { get; set; }
-    public String? Tags { get; set; } // TODO PSK-58
-    public String? Image { get; set; } // TODO PSK-50
+    public string? Tags { get; set; } // TODO PSK-58
+    public string Image { get; set; } = string.Empty;
 }
