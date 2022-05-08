@@ -14,5 +14,5 @@ public class ItemRequest
     public DateTime? From { get; set; }
     public DateTime? To { get; set; }
     public DateTime UploadDate { get; set; }
-    public ICollection<Image> Images { get; set; } = new List<Image>();
+    public string Image { get; set; } = string.Empty;
 }

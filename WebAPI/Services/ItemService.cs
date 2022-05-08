@@ -34,6 +34,7 @@ public class ItemService : IItemService
         await _context.SaveChangesAsync();
 
         return item.ItemId;
+
     }
 
     private Item BuildItemEntity(PartialItem partialItem) => new()
@@ -163,9 +164,7 @@ public class ItemService : IItemService
             return null;
         }
 
-        var itemDto = new ItemDetailsScreenDto();
-
-        itemDto =  new ItemDetailsScreenDto
+        var itemDto =  new ItemDetailsScreenDto
             {
                 ItemId = item.ItemId,
                 Name = item.Name,
@@ -208,7 +207,7 @@ public class ItemService : IItemService
             To = itemRequest.To,
             UploadDate = itemRequest.UploadDate,
             UpdateDate = DateTime.Today,
-            Images = itemRequest.Images,
+            Images = SaveImages(itemRequest.Name, itemRequest.Image).Result,
         };
     }
 }
