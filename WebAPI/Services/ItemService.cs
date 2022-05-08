@@ -106,6 +106,13 @@ public class ItemService : IItemService
             .Include(x => x.Images)
             .ToListAsync();
 
+    private async Task<List<Guid>> GetUserItemsIds(Guid userId)
+    {
+        return await _context.Items.Where(
+            x => x.User != null && x.User.UserId == userId
+            ).Select(x => x.ItemId).ToListAsync();
+    }
+
     public async Task<Paged<ItemBrowserPageDto>?> GetItemsForBrowserPage(ItemsPageQuery filters, PagingQuery paging)
     {
         var itemsForBrowserPage = await GetItems();
@@ -115,7 +122,21 @@ public class ItemService : IItemService
             return null;
         }
 
-        var itemDtos = itemsForBrowserPage
+        var itemDtos = MapItemsToItemBrowserPage(itemsForBrowserPage);
+
+        itemDtos = Filter(filters, itemDtos);
+
+        int count = itemDtos.Count();
+
+        itemDtos = itemDtos.Skip((paging.Page - 1) * paging.ItemsPerPage).Take(paging.ItemsPerPage);
+
+        var paged = new Paged<ItemBrowserPageDto>(itemDtos, paging.Page, count, paging.ItemsPerPage);
+        return paged;
+    }
+
+    private static IEnumerable<ItemBrowserPageDto> MapItemsToItemBrowserPage(List<Item> itemsForBrowserPage)
+    {
+        return itemsForBrowserPage
             .Select(i => new ItemBrowserPageDto
             {
                 ItemId = i.ItemId,
@@ -126,16 +147,8 @@ public class ItemService : IItemService
                 Category = i.Category,
                 UploadDate = i.UploadDate,
                 City = i.Address?.City,
-            });
-
-        itemDtos = Filter(filters, itemDtos);
-
-        int count = itemDtos.Count();
-
-        itemDtos = itemDtos.Skip((paging.Page - 1) * paging.ItemsPerPage).Take(paging.ItemsPerPage);
-
-        var paged = new Paged<ItemBrowserPageDto>(itemDtos, paging.Page, count, paging.ItemsPerPage);
-        return paged;
+            })
+            .ToList();
     }
 
     private static IEnumerable<ItemBrowserPageDto> Filter(ItemsPageQuery filters, IEnumerable<ItemBrowserPageDto> itemDtos)
@@ -183,6 +196,19 @@ public class ItemService : IItemService
         };
 
         return itemDto;
+    }
+
+    public async Task<List<ItemBrowserPageDto>?> GetItemsWithSeveralIdsForBrowserPage(Guid userId)
+    {
+        var itemIds = await GetUserItemsIds(userId);
+        var items = await _context.Items.Where(x => itemIds.Contains(x.ItemId)).ToListAsync();
+
+        if (!items.Any())
+        {
+            return null;
+        }
+
+        return (List<ItemBrowserPageDto>?)MapItemsToItemBrowserPage(items);
     }
 
     public async Task UpdateItem(ItemRequest itemRequest, Item item)
