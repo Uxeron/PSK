@@ -4,6 +4,7 @@ using Data;
 using Data.Models;
 using Data.Requests;
 using Data.Wrappers;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SFKR.Request;
 using WebAPI.Models;
@@ -33,6 +34,7 @@ public class ItemService : IItemService
         await _context.SaveChangesAsync();
 
         return item.ItemId;
+
     }
 
     private Item BuildItemEntity(PartialItem partialItem) => new()
@@ -151,5 +153,61 @@ public class ItemService : IItemService
         }
 
         return itemDtos;
+    }
+
+    public async Task<ItemDetailsScreenDto?> GetItemForDetailsScreen(Guid id)
+    {
+        var item = await GetItem(id);
+
+        if(item == null)
+        {
+            return null;
+        }
+
+        var itemDto =  new ItemDetailsScreenDto
+            {
+                ItemId = item.ItemId,
+                Name = item.Name,
+                Description = item.Description,
+                Condition = item.Condition,
+                Category = item.Category,
+                IsToGiveAway = item.IsToGiveAway,
+                IsTakenAway = DateTime.Today < item.From && item.From < DateTime.Today,
+                To = item.To,
+                UploadDate = item.UploadDate,
+                UpdateDate = item.UpdateDate,
+                Images = item.Images,
+                Country = item.Address?.Country,
+                City = item.Address?.City,
+                StreetName = item.Address?.StreetName,
+        };
+
+        return itemDto;
+    }
+
+    public async Task UpdateItem(ItemRequest itemRequest, Item item)
+    {
+        var updatedItem = MapDtoToModel(itemRequest);
+        _context.Entry(item).State = EntityState.Detached;
+        _context.Entry(updatedItem).State = EntityState.Modified;
+        await _context.SaveChangesAsync();
+    }
+
+    private Item MapDtoToModel(ItemRequest itemRequest)
+    {
+        return new Item
+        {
+            ItemId = itemRequest.ItemId,
+            Name = itemRequest.Name,
+            Description = itemRequest.Description,
+            Condition = itemRequest.Condition,
+            Category = itemRequest.Category,
+            IsToGiveAway = itemRequest.IsToGiveAway,
+            From = itemRequest.From,
+            To = itemRequest.To,
+            UploadDate = itemRequest.UploadDate,
+            UpdateDate = DateTime.Today,
+            Images = SaveImages(itemRequest.Name, itemRequest.Image).Result,
+        };
     }
 }
