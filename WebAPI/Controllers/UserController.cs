@@ -1,12 +1,13 @@
 ﻿namespace WebAPI.Controllers;
 
 using Data.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using WebAPI.Models;
 using WebAPI.Services.Interfaces;
 
 [Route("api/[controller]")]
-[ApiController]
+[ApiController, Authorize]
 public class UserController : ControllerBase
 {
     private readonly IUserService _userService;
@@ -19,13 +20,13 @@ public class UserController : ControllerBase
         _itemService = itemService;
     }
 
-    [HttpGet]
+    [HttpGet, Authorize]
     public async Task<List<User>> GetUsers()
     {
         return await _userService.GetUsers();
     }
 
-    [HttpGet("{id}")]
+    [HttpGet("{id}"), Authorize]
     public async Task<User?> GetUser(Guid id)
     {
         return await _userService.GetUser(id);
