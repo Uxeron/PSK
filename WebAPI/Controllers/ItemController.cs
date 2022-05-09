@@ -26,14 +26,14 @@ public class ItemController : ControllerBase
         return await _itemService.GetItem(id);
     }
 
-    [HttpPost, Authorize] //Example how to add Authorize
+    [HttpPost, Authorize]
     public async Task<IActionResult> CreateItem([FromBody] PartialItem item)
     {
         Guid itemId = await _itemService.CreateItem(item);
         return Ok(itemId);
     }
 
-    [HttpGet]
+    [HttpGet, Authorize]
     public async Task<Paged<ItemBrowserPageDto>?> GetItemsForBrowserPage([FromQuery] ItemsPageQuery filters, [FromQuery] PagingQuery paging)
     {
         return await _itemService.GetItemsForBrowserPage(filters, paging);
