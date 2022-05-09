@@ -8,14 +8,13 @@ type ItemCardProps = {
 }
 
 export const ItemCard = (props: ItemCardProps) => {
-    const {id, name, description, image} = props;
+    const { id, name, description, image } = props;
 
     return (
         <a className="min-w-[200px] block" href={`/details/${id}`}>
             <img
                 className="object-cover w-full h-80"
-                // src={image}
-                src={'https://img-9gag-fun.9cache.com/photo/azM06Pp_460swp.webp'}
+                src={image}
                 alt=""
             />
 
