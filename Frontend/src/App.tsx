@@ -1,6 +1,6 @@
 import React from 'react';
 import { ToastContainer } from 'react-toastify';
-import { BrowserRouter, Route, Routes } from 'react-router-dom'
+import { Route, Routes } from 'react-router-dom'
 import { BrowseScreen } from './Screens/BrowseScreen/BrowseScreen';
 import { DetailsScreen } from './Screens/DetailsScreen';
 import { NotFound } from './Screens/NotFound';
@@ -8,21 +8,22 @@ import { UploadScreen } from './Screens/UploadScreen/UploadScreen';
 import { UserScreen } from './Screens/UserScreen';
 import "react-toastify/dist/ReactToastify.css";
 import { NavBar } from './Components/NavBar';
+import { ProtectedRoute } from './Auth/ProtectedRoute';
+import { LandingPage } from './Screens/LandingPage';
 
 function App() {
   return (<div>
     <NavBar />
     <ToastContainer />
-    <BrowserRouter>
       <Routes>
-        <Route path="/" element={<BrowseScreen />} />
-        <Route path="/upload" element={<UploadScreen />} />
-        <Route path="/details/:itemId" element={<DetailsScreen />} />
-        <Route path="/user/:userId" element={<UserScreen />} />
+        <Route path="/" element={<LandingPage />} />
+        <Route path="/browse" element={<ProtectedRoute component={BrowseScreen} />} />
+        <Route path="/upload" element={<ProtectedRoute component={UploadScreen} />} />
+        <Route path="/details/:itemId" element={<ProtectedRoute component={DetailsScreen} />} />
+        <Route path="/user/:userId" element={<ProtectedRoute component={UserScreen} />} />
         <Route path="/*" element={<NotFound />} />
       </Routes>
-    </BrowserRouter>
-  </div>
+  </div>  
   );
 }
 

@@ -1,8 +1,8 @@
-import { BASE_URL } from "./constants";
 import axios from "axios";
+import { REACT_APP_SERVER_URL } from "./constants";
 
 export default axios.create({
-    baseURL: BASE_URL,
+    baseURL: REACT_APP_SERVER_URL,
     headers: {
         "Content-type": "application/json",
     }

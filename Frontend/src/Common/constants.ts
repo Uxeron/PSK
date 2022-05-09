@@ -1,1 +1,5 @@
-export const BASE_URL = 'https://localhost:7210/api'
+export const REACT_APP_AUTH0_DOMAIN='dev-y90go66m.us.auth0.com'
+export const REACT_APP_AUTH0_CLIENT_ID='66vkLP5TzD79CwSONuwQGcQqiKyb6jPf'
+export const REACT_APP_AUTH0_REDIRECT_URI='http://localhost:3000'
+export const REACT_APP_SERVER_URL= 'https://localhost:7210/api'
+export const REACT_APP_AUTH0_AUDIENCE='https://psk.authentication.module'
