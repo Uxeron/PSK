@@ -23,8 +23,8 @@ public class Startup
 
         }).AddJwtBearer(options =>
         {
-            options.Authority = Configuration.GetSection("Auth0")["Authority"];
-            options.Audience = Configuration.GetSection("Auth0")["Audience"];
+            options.Authority = Configuration.GetValue<string>("Auth0:Authority");
+            options.Audience = Configuration.GetValue<string>("Auth0:Audience");
             options.RequireHttpsMetadata = false;
         });
 
