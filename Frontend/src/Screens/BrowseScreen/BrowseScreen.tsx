@@ -21,10 +21,6 @@ export const BrowseScreen = () => {
     const { getAccessTokenSilently, isLoading } = useAuth0();
     const [accessToken, setAccessToken] = useState<string>('');
 
-    if (isLoading) {
-        return <Spinner />;
-    }
-
     useEffect(() => {
         const initalize = async () => {
             try {
@@ -35,6 +31,10 @@ export const BrowseScreen = () => {
         };
         initalize();
     }, [getAccessTokenSilently]);
+
+    if (isLoading) {
+        return <Spinner />;
+    }
 
     const getFiltered = () => ItemService.getAll({ accessToken, page: currentPage, category: itemCategoryMapBrowse[category.name] }).then((val) => setData(val));
 
