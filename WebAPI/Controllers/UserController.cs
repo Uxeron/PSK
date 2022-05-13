@@ -1,5 +1,6 @@
 ﻿namespace WebAPI.Controllers;
 
+using System.Security.Claims;
 using Data.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -20,16 +21,17 @@ public class UserController : ControllerBase
         _itemService = itemService;
     }
 
-    [HttpGet, Authorize]
-    public async Task<List<User>> GetUsers()
+    [HttpGet]
+    [Authorize]
+    public async Task<User?> GetUser()
     {
-        return await _userService.GetUsers();
-    }
+        var userId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
+        if (userId == null)
+        {
+            return null;
+        }
 
-    [HttpGet("{id}"), Authorize]
-    public async Task<User?> GetUser(Guid id)
-    {
-        return await _userService.GetUser(id);
+        return await _userService.GetUser(userId);
     }
 
     [HttpGet("UserScreen/{id}")]
@@ -58,6 +60,13 @@ public class UserController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> CreateUser([FromBody] User user)
     {
+        var userId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
+        if (userId == null)
+        {
+            return Unauthorized();
+        }
+
+        user.UserId = userId;
         await _userService.CreateUser(user);
         return Ok();
     }

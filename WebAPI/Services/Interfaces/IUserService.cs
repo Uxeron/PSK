@@ -6,7 +6,6 @@ using Data.Models;
 
 public interface IUserService
 {
-    Task<User?> GetUser(Guid id);
-    Task<List<User>> GetUsers();
+    Task<User?> GetUser(string id);
     Task CreateUser(User user);
 }
