@@ -4,7 +4,6 @@ using Data;
 using Data.Models;
 using Data.Requests;
 using Data.Wrappers;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SFKR.Request;
 using WebAPI.Models;
@@ -28,26 +27,25 @@ public class ItemService : IItemService
 
     public async Task<Guid> CreateItem(PartialItem partialItem)
     {
-        var item = BuildItemEntity(partialItem);
+        var item = await BuildItemEntity(partialItem);
 
         await _context.Items.AddAsync(item);
         await _context.SaveChangesAsync();
 
         return item.ItemId;
-
     }
 
-    private Item BuildItemEntity(PartialItem partialItem) => new()
+    private async Task<Item> BuildItemEntity(PartialItem partialItem) => new()
         {
             Name = partialItem.Name,
-            Address = _addressService.GetAddress(partialItem.AddressId).Result,
+            Address = await _addressService.GetAddress(partialItem.AddressId),
             Description = partialItem.Description,
             Condition = partialItem.Condition,
             Category = partialItem.Category,
             IsToGiveAway = partialItem.IsToGiveAway,
-            User = _userService.GetUser(partialItem.AddressId).Result,
+            User = await _userService.GetUser(partialItem.UserId),
             UploadDate = DateTime.Now,
-            Images = SaveImages(partialItem.Name, partialItem.Image).Result
+            Images = await SaveImages(partialItem.Name, partialItem.Image)
         };
 
     private async Task<List<Data.Models.Image>> SaveImages(string imageName, string imageData) //Image name - uploaded item name
@@ -213,13 +211,13 @@ public class ItemService : IItemService
 
     public async Task UpdateItem(ItemRequest itemRequest, Item item)
     {
-        var updatedItem = MapDtoToModel(itemRequest);
+        var updatedItem = await MapDtoToModel(itemRequest);
         _context.Entry(item).State = EntityState.Detached;
         _context.Entry(updatedItem).State = EntityState.Modified;
         await _context.SaveChangesAsync();
     }
 
-    private Item MapDtoToModel(ItemRequest itemRequest)
+    private async Task<Item> MapDtoToModel(ItemRequest itemRequest)
     {
         return new Item
         {
@@ -233,7 +231,7 @@ public class ItemService : IItemService
             To = itemRequest.To,
             UploadDate = itemRequest.UploadDate,
             UpdateDate = DateTime.Today,
-            Images = SaveImages(itemRequest.Name, itemRequest.Image).Result,
+            Images = await SaveImages(itemRequest.Name, itemRequest.Image),
         };
     }
 }

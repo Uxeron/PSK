@@ -136,14 +136,14 @@ export const UploadScreen = () => {
                                     {t.uploadScreen.card1.nameLabel}
                                 </label>
                                 <input value={name} onBlur={(event) => setIsNameValid(isFieldValid(event?.target.value, true))} onChange={event => { setName(event?.target.value); handleChange() }} id="emailAddress" type="text"
-                                    className={`block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-200 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 focus:ring-blue-300 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring ${isNameValid ? '' : 'border-red-500 border-4'}`} />
+                                    className={`block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-200 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-orange-400 focus:ring-orange-300 focus:ring-opacity-40 dark:focus:border-orange-300 focus:outline-none focus:ring ${isNameValid ? '' : 'border-red-500 border-4'}`} />
 
                                 <div className="mt-4 top-16">
                                     <label className="text-gray-700 dark:text-gray-200" htmlFor="name">
                                         {t.uploadScreen.card1.descriptionLabel}
                                     </label>
                                     <textarea value={description} onBlur={(event) => setIsDescriptionValid(isFieldValid(event?.target.value, true))} onChange={event => { setDescription(event?.target.value); handleChange() }}
-                                        className={`block w-full h-20 px-4 py-2 text-gray-700 bg-white border rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 dark:focus:border-blue-300 focus:outline-none focus:ring focus:ring-blue-300 focus:ring-opacity-40 ${isDescriptionValid ? '' : 'border-red-500 border-4'}`} />
+                                        className={`block w-full h-20 px-4 py-2 text-gray-700 bg-white border rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-orange-400 dark:focus:border-orange-300 focus:outline-none focus:ring focus:ring-orange-300 focus:ring-opacity-40 ${isDescriptionValid ? '' : 'border-red-500 border-4'}`} />
                                 </div>
 
                                 <div className="w-72 mt-4 top-16">
@@ -157,7 +157,7 @@ export const UploadScreen = () => {
                                     <label className="text-gray-700 dark:text-gray-200" htmlFor="name">
                                         {t.uploadScreen.card1.tagsLabel}
                                     </label>
-                                    <input value={tags} onChange={event => { setTags(event?.target.value); handleChange() }} id="emailAddress" type="text" className="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-200 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 focus:ring-blue-300 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring" />
+                                    <input value={tags} onChange={event => { setTags(event?.target.value); handleChange() }} id="emailAddress" type="text" className="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-200 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-orange-400 focus:ring-orange-300 focus:ring-opacity-40 dark:focus:border-orange-300 focus:outline-none focus:ring" />
                                 </div>
 
                                 <div className="w-72 mt-4 top-16">
@@ -192,7 +192,7 @@ export const UploadScreen = () => {
                                 </label>
                                 <div onClick={() => openFileSelector()} className={`h-48 w-full flex justify-center items-center cursor-pointer self-center border-4 border-dashed bg-white rounded-lg dark:bg-gray-800 ${isImageMissing ? 'border-red-500' : ''}`}>
                                     {filesContent.length === 0 ? <h2 className="top-1/2 text-1xl font-bold text-gray-400 dark:text-white md:text-2xl">
-                                        {t.uploadScreen.card2.input[0]} <span className="text-blue-400 dark:text-blue-400">{t.uploadScreen.card2.input[1]}</span>
+                                        {t.uploadScreen.card2.input[0]} <span className="text-orange-400 dark:text-orange-400">{t.uploadScreen.card2.input[1]}</span>
                                     </h2> :
                                         <img className="max-h-full max-w-full" src={filesContent[0].content} />}
                                 </div>
@@ -209,7 +209,7 @@ export const UploadScreen = () => {
                     </div>
                 </div>
                 <div className="flex justify-center mt-36">
-                    <button type="submit" className="px-16 py-3 text-white transition-colors duration-200 transform bg-blue-700 rounded-md hover:bg-blue-600 focus:outline-none focus:bg-blue-600">
+                    <button type="submit" className="px-16 py-3 text-white transition-colors duration-200 transform bg-orange-700 rounded-md hover:bg-orange-600 focus:outline-none focus:bg-orange-600">
                         <h2 className="text-1xl font-bold text-white dark:text-white md:text-2xl">
                             {t.uploadScreen.submitButton}
                         </h2>

@@ -19,10 +19,8 @@ public class UserService : IUserService
         await _context.Users
             .Include(u => u.Address)
             .Where(i => i.UserId == id)
+            .Include(i => i.Address)
             .FirstOrDefaultAsync();
-
-    public async Task<List<User>> GetUsers() => 
-        await _context.Users.ToListAsync();
 
     public async Task CreateUser(User user)
     {

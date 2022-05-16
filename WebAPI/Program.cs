@@ -1,51 +1,14 @@
-using Data;
-using WebAPI.Services;
-using WebAPI.Services.Interfaces;
+using WebAPI;
 
-var builder = WebApplication.CreateBuilder(args);
-
-// Add services to the container.
-var services = builder.Services;
-
-services.AddCors();
-services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-services.AddEndpointsApiExplorer();
-services.AddSwaggerGen();
-
-services.AddDbContext<PskContext>();
-
-services.AddScoped<IItemService, ItemService>();
-services.AddScoped<IAddressService, AddressService>();
-services.AddScoped<IUserService, UserService>();
-
-var app = builder.Build();
-
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
+public class Program
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
+    public static void Main(string[] args)
+    {
+        var host = CreateHostBuilder(args).Build();
+        host.Run();
+    }
+
+    public static IHostBuilder CreateHostBuilder(string[] args) =>
+        Host.CreateDefaultBuilder(args)
+            .ConfigureWebHostDefaults(webBuilder => { webBuilder.UseStartup<Startup>(); });
 }
-
-using (var scope = app.Services.CreateScope())
-{
-    var context = scope.ServiceProvider.GetRequiredService<PskContext>();
-    context.Database.EnsureCreated();
-}
-
-app.UseHttpsRedirection();
-
-app.UseCors(builder =>
-{
-    builder
-    .AllowAnyOrigin()
-    .AllowAnyMethod()
-    .AllowAnyHeader();
-});
-
-app.UseAuthorization();
-
-app.MapControllers();
-
-app.Run();
