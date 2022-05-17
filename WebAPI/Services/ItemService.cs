@@ -104,7 +104,7 @@ public class ItemService : IItemService
             .Include(x => x.Images)
             .ToListAsync();
 
-    private async Task<List<Guid>> GetUserItemsIds(Guid userId)
+    private async Task<List<Guid>> GetUserItemsIds(string userId)
     {
         return await _context.Items.Where(
             x => x.User != null && x.User.UserId == userId
@@ -196,7 +196,7 @@ public class ItemService : IItemService
         return itemDto;
     }
 
-    public async Task<List<ItemBrowserPageDto>?> GetItemsWithSeveralIdsForBrowserPage(Guid userId)
+    public async Task<List<ItemBrowserPageDto>?> GetItemsWithSeveralIdsForBrowserPage(string userId)
     {
         var itemIds = await GetUserItemsIds(userId);
         var items = await _context.Items.Where(x => itemIds.Contains(x.ItemId)).ToListAsync();

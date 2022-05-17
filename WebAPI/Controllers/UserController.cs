@@ -35,7 +35,7 @@ public class UserController : ControllerBase
     }
 
     [HttpGet("UserScreen/{id}")]
-    public async Task<UserScreenDto?> GetUserScreenDetails([FromRoute] Guid id)
+    public async Task<UserScreenDto?> GetUserScreenDetails([FromRoute] string id)
     {
         var user = await _userService.GetUser(id);
 
