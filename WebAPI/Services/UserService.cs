@@ -3,7 +3,6 @@
 using Data;
 using Data.Models;
 using Microsoft.EntityFrameworkCore;
-using WebAPI.Models;
 using WebAPI.Services.Interfaces;
 
 public class UserService : IUserService

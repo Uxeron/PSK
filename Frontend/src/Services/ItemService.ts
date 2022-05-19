@@ -12,16 +12,33 @@ type GetAllProps = {
     condition?: string,
 }
 
+type GetByIdProps = {
+    accessToken: string,
+    id: string,
+}
+
+type UploadProps = {
+    accessToken: string,
+    data: UploadData, 
+    navigate: NavigateFunction ,
+}
+
+
 const BASE_URL = REACT_APP_SERVER_URL;
 
 class ItemService {
-    async upload(data: UploadData, navigate: NavigateFunction ) {
-        return http.post<UploadData>(`${BASE_URL}/Item`, JSON.stringify(data)).then(
+    async upload(props: UploadProps) {
+        return http.post<UploadData>(`${BASE_URL}/Item`, JSON.stringify(props?.data), {
+            headers: {
+              'Authorization': `Bearer ${props?.accessToken}`
+            }
+          }).then(
             (res) => res.status === 200 ? toast.success("Item was successfully uploaded", {
-                onClick: () => navigate(`/details/${res.data}`)
+                onClick: () => props?.navigate(`/details/${res.data}`)
             }) : toast.error(`Error code: ${res.status}`)
         );
     }
+    
     async getAll(props?: GetAllProps) {
         const url = `${BASE_URL}/Item${props ? `?` : ``}${props?.city ? `City=${props.city}&` : ``}${!props?.category ? `` : (props?.category == "All") ? `` : `Category=${props?.category}&`}${props?.page ? `Page=${props.page}&` : ``}ItemsPerPage=12`
         
@@ -31,8 +48,13 @@ class ItemService {
             }
           }).then((res) => { return res.data });
     }
-    async getById(id: string) {
-        return http.get(`${BASE_URL}/Item/${id}`).then((res) => {return res.data;})
+
+    async getById(props: GetByIdProps) {
+        return http.get(`${BASE_URL}/Item/${props.id}`, {
+            headers: {
+              'Authorization': `Bearer ${props?.accessToken}`
+            }
+          }).then((res) => {return res.data;})
     }
 }
 
