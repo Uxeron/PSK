@@ -51,14 +51,13 @@ public class UserController : ControllerBase
             Surname = user.Surname,
             Email = user.Email,
             PhoneNumber = user.PhoneNumber,
-            Image = user.Image,
             Address = user.Address,
             ListedItems = await _itemService.GetItemsWithSeveralIdsForBrowserPage(user.UserId),
         };
     }
 
     [HttpPost]
-    public async Task<IActionResult> CreateUser([FromBody] User user)
+    public async Task<IActionResult> CreateUser([FromBody] NewUser user)
     {
         var userId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
         if (userId == null)
