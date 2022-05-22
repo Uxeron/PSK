@@ -11,6 +11,7 @@ using WebAPI.Services.Interfaces;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Processing;
 using SixLabors.ImageSharp.Formats.Jpeg;
+using Microsoft.AspNetCore.Mvc;
 
 public class ItemService : IItemService
 {
@@ -209,15 +210,25 @@ public class ItemService : IItemService
         return (List<ItemBrowserPageDto>?)MapItemsToItemBrowserPage(items);
     }
 
-    public async Task UpdateItem(ItemRequest itemRequest, Item item)
+    public async Task<bool> UpdateItemWithoutConflict(ItemRequest itemRequest, Item item)
     {
-        var updatedItem = await MapDtoToModel(itemRequest);
-        _context.Entry(item).State = EntityState.Detached;
-        _context.Entry(updatedItem).State = EntityState.Modified;
-        await _context.SaveChangesAsync();
+        var updatedItem = await MapDtoToModelAsync(itemRequest);
+        _context.Entry(item).CurrentValues.SetValues(updatedItem);
+
+        try
+        {
+            await Task.Delay(3000);
+            await _context.SaveChangesAsync();
+        }
+        catch (DbUpdateConcurrencyException)
+        {
+            return false;
+        }
+
+        return true;
     }
 
-    private async Task<Item> MapDtoToModel(ItemRequest itemRequest)
+    private async Task<Item> MapDtoToModelAsync(ItemRequest itemRequest)
     {
         return new Item
         {
@@ -231,6 +242,8 @@ public class ItemService : IItemService
             To = itemRequest.To,
             UploadDate = itemRequest.UploadDate,
             UpdateDate = DateTime.Today,
+            User = await _userService.GetUser(itemRequest.UserId),
+            Address = await _addressService.GetAddress(itemRequest.AddressId),
             Images = await SaveImages(itemRequest.Name, itemRequest.Image),
         };
     }

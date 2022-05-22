@@ -75,7 +75,10 @@ public class ItemController : ControllerBase
             return Unauthorized();
         }
 
-        await _itemService.UpdateItem(itemRequest, item);
+        if (!(await _itemService.UpdateItemWithoutConflict(itemRequest, item)))
+        {
+            return Conflict();
+        }
         return Ok();
     }
 }
