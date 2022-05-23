@@ -1,9 +1,13 @@
 ﻿namespace WebAPI;
 
+using Autofac;
+using Autofac.Extras.DynamicProxy;
 using Data;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using WebAPI.Services;
 using WebAPI.Services.Interfaces;
+using WebAPI.Logger;
+using Autofac.Extensions.DependencyInjection;
 
 public class Startup
 {
@@ -13,6 +17,7 @@ public class Startup
     }
 
     public IConfiguration Configuration { get; }
+    public ILifetimeScope AutofacContainer { get; private set; }
 
     public void ConfigureServices(IServiceCollection services)
     {
@@ -41,6 +46,23 @@ public class Startup
         services.AddScoped<IUserService, UserService>();
     }
 
+    public void ConfigureContainer(ContainerBuilder b)
+    {
+        b.Register(i => new LoggerInterceptor());
+        b.RegisterType<ItemService>()
+            .AsImplementedInterfaces()
+            .EnableInterfaceInterceptors()
+            .InterceptedBy(typeof(LoggerInterceptor));
+        b.RegisterType<AddressService>()
+            .AsImplementedInterfaces()
+            .EnableInterfaceInterceptors()
+            .InterceptedBy(typeof(LoggerInterceptor));
+        b.RegisterType<UserService>()
+            .AsImplementedInterfaces()
+            .EnableInterfaceInterceptors()
+            .InterceptedBy(typeof(LoggerInterceptor));
+    }
+
     public void Configure(IApplicationBuilder app)
     {
         // Configure the HTTP request pipeline.
@@ -49,6 +71,7 @@ public class Startup
         app.UseDeveloperExceptionPage();
 
         app.UseAuthentication();
+        AutofacContainer = app.ApplicationServices.GetAutofacRoot();
 
         using (var scope = app.ApplicationServices.CreateScope())
         using (var context = scope.ServiceProvider.GetRequiredService<PskContext>())

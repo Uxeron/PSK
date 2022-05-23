@@ -1,11 +1,14 @@
 ﻿namespace WebAPI.Services;
 
+using Autofac.Extras.DynamicProxy;
 using Data;
 using Data.Models;
 using Microsoft.EntityFrameworkCore;
+using WebAPI.Logger;
 using WebAPI.Models;
 using WebAPI.Services.Interfaces;
 
+[Intercept(typeof(LoggerInterceptor))]
 public class UserService : IUserService
 {
     private readonly PskContext _context;

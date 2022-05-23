@@ -4,7 +4,10 @@ using Data;
 using Data.Models;
 using Microsoft.EntityFrameworkCore;
 using WebAPI.Models;
+using WebAPI.Logger;
+using Autofac.Extras.DynamicProxy;
 
+[Intercept(typeof(LoggerInterceptor))]
 public class AddressService : IAddressService
 {
     private readonly PskContext _context;
