@@ -11,7 +11,10 @@ using WebAPI.Services.Interfaces;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Processing;
 using SixLabors.ImageSharp.Formats.Jpeg;
+using Autofac.Extras.DynamicProxy;
+using WebAPI.Logger;
 
+[Intercept(typeof(LoggerInterceptor))]
 public class ItemService : IItemService
 {
     private readonly PskContext _context;
