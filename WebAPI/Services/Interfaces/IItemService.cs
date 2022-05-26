@@ -15,6 +15,6 @@ public interface IItemService
     Task<ItemDetailsScreenDto?> GetItemForDetailsScreen(string userId, Guid id);
     Task<Guid> CreateItem(PartialItem item);
     Task<bool> UpdateItemWithoutConflict(ItemRequest itemRequest, Item item);
-    Task<Paged<ItemBrowserPageDto>?> GetItemsForBrowserPage(string userId, ItemsPageQuery filters, PagingQuery paging);
+    Task<Paged<ItemBrowserPageDto>?> GetItemsForBrowserPage(string userId, ItemsPageQuery filters, PagingQuery paging, string? searchPhrase);
     Task<List<ItemBrowserPageDto>?> GetItemsWithSeveralIdsForBrowserPage(string userId);
 }

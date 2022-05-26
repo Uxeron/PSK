@@ -44,10 +44,10 @@ public class ItemController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<Paged<ItemBrowserPageDto>?> GetItemsForBrowserPage([FromQuery] ItemsPageQuery filters, [FromQuery] PagingQuery paging)
+    public async Task<Paged<ItemBrowserPageDto>?> GetItemsForBrowserPage([FromQuery] ItemsPageQuery filters, [FromQuery] PagingQuery paging, [FromQuery] string? searchPhrase = null)
     {
         var userId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
-        return await _itemService.GetItemsForBrowserPage(userId, filters, paging);
+        return await _itemService.GetItemsForBrowserPage(userId, filters, paging, searchPhrase);
     }
 
     [HttpGet("DetailsPage/{id}")]

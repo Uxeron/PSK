@@ -115,7 +115,7 @@ public class ItemService : IItemService
             ).Select(x => x.ItemId).ToListAsync();
     }
 
-    public async Task<Paged<ItemBrowserPageDto>?> GetItemsForBrowserPage(string userId, ItemsPageQuery filters, PagingQuery paging)
+    public async Task<Paged<ItemBrowserPageDto>?> GetItemsForBrowserPage(string userId, ItemsPageQuery filters, PagingQuery paging, string? searchPhrase)
     {
         var itemsForBrowserPage = await GetItems();
 
@@ -125,6 +125,11 @@ public class ItemService : IItemService
         }
 
         var itemDtos = MapItemsToItemBrowserPage(itemsForBrowserPage);
+
+        if(searchPhrase != null)
+        {
+            itemDtos = itemDtos.Where(x => x.Name.Contains(searchPhrase));
+        }
 
         itemDtos = Filter(filters, itemDtos);
 
