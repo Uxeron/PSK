@@ -12,11 +12,16 @@ import { ProtectedRoute } from './Auth/ProtectedRoute';
 import { LandingPage } from './Screens/LandingPage';
 import { RegisterScreen } from './Screens/RegisterScreen';
 import { EditDetailsScreen } from './Screens/EditDetailsScreen';
+import { useAuth0 } from '@auth0/auth0-react';
+import { Spinner } from './Components/Spinner';
 
 function App() {
-  return (<div>
-    <NavBar />
-    <ToastContainer />
+  const { isLoading } = useAuth0();
+
+  return (<>
+    {!isLoading ? <div>
+      <NavBar />
+      <ToastContainer />
       <Routes>
         <Route path="/" element={<LandingPage />} />
         <Route path="/register" element={<RegisterScreen />} />
@@ -27,7 +32,8 @@ function App() {
         <Route path="/user/:userId" element={<ProtectedRoute component={UserScreen} />} />
         <Route path="/*" element={<NotFound />} />
       </Routes>
-  </div>  
+    </div> : <Spinner />}
+  </>
   );
 }
 

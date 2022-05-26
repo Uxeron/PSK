@@ -140,7 +140,7 @@ export const UploadScreen = () => {
                 </div>
                 <div className="grid grid-cols-2 gap-4 h-[572px] z-50">
                     <div>
-                        <div className="self-center mr-4 ml-6 lg:ml-auto min-mx-sx z-50 max-w-lg overflow-visible bg-white rounded-lg drop-shadow-2xl dark:bg-gray-800">
+                        <div className="self-center mr-4 ml-6 lg:ml-auto min-mx-sx z-50 max-w-lg overflow-visible bg-white rounded-md drop-shadow-2xl dark:bg-gray-800">
                             <div className="p-4">
                                 <label className="text-gray-700 dark:text-gray-200" htmlFor="name">
                                     {t.uploadScreen.card1.nameLabel}
@@ -195,7 +195,7 @@ export const UploadScreen = () => {
                         </div>
                     </div>
                     <div>
-                        <div className="self-center h-max ml-4 mr-6 lg:mr-auto lg:mr-auto min-mx-sx max-w-lg overflow-hidden bg-white rounded-lg drop-shadow-2xl dark:bg-gray-800">
+                        <div className="self-center h-max ml-4 mr-6 lg:mr-auto lg:mr-auto min-mx-sx max-w-lg overflow-hidden bg-white rounded-md drop-shadow-2xl dark:bg-gray-800">
                             <div className="p-8">
                                 <label className="">
                                     {t.uploadScreen.card2.label}

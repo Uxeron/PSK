@@ -11,6 +11,7 @@ export const LandingPage = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
+    
     if (user) {
       const initalize = async () => {
         try {
