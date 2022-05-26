@@ -14,5 +14,7 @@ public class ItemRequest
     public DateTime? From { get; set; }
     public DateTime? To { get; set; }
     public DateTime UploadDate { get; set; }
+    public string UserId { get; set; } = string.Empty;
+    public Guid AddressId { get; set; }
     public string Image { get; set; } = string.Empty;
 }

@@ -1,10 +1,12 @@
 ﻿namespace Data.Models;
 
+using System.ComponentModel.DataAnnotations;
 using Data.Enums;
 
 public class Item
 {
     public Guid ItemId { get; set; }
+    [ConcurrencyCheck]
     public string Name { get; set; } = string.Empty;
     public string Description { get; set; } = string.Empty;
     public ItemCondition Condition { get; set; }
