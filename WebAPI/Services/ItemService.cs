@@ -11,8 +11,11 @@ using WebAPI.Services.Interfaces;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Processing;
 using SixLabors.ImageSharp.Formats.Jpeg;
+using Autofac.Extras.DynamicProxy;
+using WebAPI.Logger;
 using Microsoft.AspNetCore.Mvc;
 
+[Intercept(typeof(LoggerInterceptor))]
 public class ItemService : IItemService
 {
     private readonly PskContext _context;
@@ -39,7 +42,7 @@ public class ItemService : IItemService
     private async Task<Item> BuildItemEntity(PartialItem partialItem) => new()
         {
             Name = partialItem.Name,
-            Address = await _addressService.GetAddress(partialItem.AddressId),
+            Address = await _addressService.GetAddress(partialItem.UserId, partialItem.AddressId),
             Description = partialItem.Description,
             Condition = partialItem.Condition,
             Category = partialItem.Category,
@@ -90,7 +93,7 @@ public class ItemService : IItemService
         return ms.ToArray();
     }
 
-    public async Task<Item?> GetItem(Guid id) =>
+    public async Task<Item?> GetItem(string userId, Guid id) =>
         await _context.Items
             .Where(i => i.ItemId == id)
             .Include(i => i.User)
@@ -112,7 +115,7 @@ public class ItemService : IItemService
             ).Select(x => x.ItemId).ToListAsync();
     }
 
-    public async Task<Paged<ItemBrowserPageDto>?> GetItemsForBrowserPage(ItemsPageQuery filters, PagingQuery paging)
+    public async Task<Paged<ItemBrowserPageDto>?> GetItemsForBrowserPage(string userId, ItemsPageQuery filters, PagingQuery paging)
     {
         var itemsForBrowserPage = await GetItems();
 
@@ -167,9 +170,10 @@ public class ItemService : IItemService
         return itemDtos;
     }
 
-    public async Task<ItemDetailsScreenDto?> GetItemForDetailsScreen(Guid id)
+    public async Task<ItemDetailsScreenDto?> GetItemForDetailsScreen(string userId, Guid id)
     {
-        var item = await GetItem(id);
+
+        var item = await GetItem(userId, id);
 
         if(item == null)
         {
@@ -243,7 +247,7 @@ public class ItemService : IItemService
             UploadDate = itemRequest.UploadDate,
             UpdateDate = DateTime.Today,
             User = await _userService.GetUser(itemRequest.UserId),
-            Address = await _addressService.GetAddress(itemRequest.AddressId),
+            Address = await _addressService.GetAddress(itemRequest.UserId, itemRequest.AddressId),
             Images = await SaveImages(itemRequest.Name, itemRequest.Image),
         };
     }

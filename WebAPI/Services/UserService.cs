@@ -1,11 +1,14 @@
 ﻿namespace WebAPI.Services;
 
+using Autofac.Extras.DynamicProxy;
 using Data;
 using Data.Models;
 using Microsoft.EntityFrameworkCore;
+using WebAPI.Logger;
 using WebAPI.Models;
 using WebAPI.Services.Interfaces;
 
+[Intercept(typeof(LoggerInterceptor))]
 public class UserService : IUserService
 {
     private readonly PskContext _context;
@@ -26,7 +29,7 @@ public class UserService : IUserService
 
     public async Task CreateUser(NewUser newUser)
     {
-        Address address = await _addressService.CreateAddress(newUser.Address);
+        Address address = await _addressService.CreateAddress(newUser.UserId, newUser.Address);
         User user = new()
         {
             Address = address,

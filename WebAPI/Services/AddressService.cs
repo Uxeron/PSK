@@ -4,7 +4,10 @@ using Data;
 using Data.Models;
 using Microsoft.EntityFrameworkCore;
 using WebAPI.Models;
+using WebAPI.Logger;
+using Autofac.Extras.DynamicProxy;
 
+[Intercept(typeof(LoggerInterceptor))]
 public class AddressService : IAddressService
 {
     private readonly PskContext _context;
@@ -15,7 +18,7 @@ public class AddressService : IAddressService
 
     }
 
-    public async Task<Address> CreateAddress(NewAddress newAddress)
+    public async Task<Address> CreateAddress(string userId, NewAddress newAddress)
     {
         Address address = new()
         {
@@ -32,7 +35,7 @@ public class AddressService : IAddressService
 
 
 
-    public async Task<Address?> GetAddress(Guid id) => 
+    public async Task<Address?> GetAddress(string userId, Guid id) => 
         await _context.Address
             .Where(i => i.AddressId == id)
             .FirstOrDefaultAsync();
