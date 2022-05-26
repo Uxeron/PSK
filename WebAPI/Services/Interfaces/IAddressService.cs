@@ -4,6 +4,6 @@ using WebAPI.Models;
 
 public interface IAddressService
 {
-    Task<Address?> GetAddress(Guid id);
-    Task<Address> CreateAddress(NewAddress newAddress);
+    Task<Address?> GetAddress(string userId, Guid id);
+    Task<Address> CreateAddress(string userId, NewAddress newAddress);
 }
