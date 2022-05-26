@@ -4,7 +4,6 @@ using Data;
 using Data.Models;
 using Data.Requests;
 using Data.Wrappers;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SFKR.Request;
 using WebAPI.Models;
@@ -28,26 +27,25 @@ public class ItemService : IItemService
 
     public async Task<Guid> CreateItem(PartialItem partialItem)
     {
-        var item = BuildItemEntity(partialItem);
+        var item = await BuildItemEntity(partialItem);
 
         await _context.Items.AddAsync(item);
         await _context.SaveChangesAsync();
 
         return item.ItemId;
-
     }
 
-    private Item BuildItemEntity(PartialItem partialItem) => new()
+    private async Task<Item> BuildItemEntity(PartialItem partialItem) => new()
         {
             Name = partialItem.Name,
-            Address = _addressService.GetAddress(partialItem.AddressId).Result,
+            Address = await _addressService.GetAddress(partialItem.AddressId),
             Description = partialItem.Description,
             Condition = partialItem.Condition,
             Category = partialItem.Category,
             IsToGiveAway = partialItem.IsToGiveAway,
-            User = _userService.GetUser(partialItem.AddressId).Result,
+            User = await _userService.GetUser(partialItem.UserId),
             UploadDate = DateTime.Now,
-            Images = SaveImages(partialItem.Name, partialItem.Image).Result
+            Images = await SaveImages(partialItem.Name, partialItem.Image)
         };
 
     private async Task<List<Data.Models.Image>> SaveImages(string imageName, string imageData) //Image name - uploaded item name
@@ -106,6 +104,13 @@ public class ItemService : IItemService
             .Include(x => x.Images)
             .ToListAsync();
 
+    private async Task<List<Guid>> GetUserItemsIds(Guid userId)
+    {
+        return await _context.Items.Where(
+            x => x.User != null && x.User.UserId == userId
+            ).Select(x => x.ItemId).ToListAsync();
+    }
+
     public async Task<Paged<ItemBrowserPageDto>?> GetItemsForBrowserPage(ItemsPageQuery filters, PagingQuery paging)
     {
         var itemsForBrowserPage = await GetItems();
@@ -115,7 +120,21 @@ public class ItemService : IItemService
             return null;
         }
 
-        var itemDtos = itemsForBrowserPage
+        var itemDtos = MapItemsToItemBrowserPage(itemsForBrowserPage);
+
+        itemDtos = Filter(filters, itemDtos);
+
+        int count = itemDtos.Count();
+
+        itemDtos = itemDtos.Skip((paging.Page - 1) * paging.ItemsPerPage).Take(paging.ItemsPerPage);
+
+        var paged = new Paged<ItemBrowserPageDto>(itemDtos, paging.Page, count, paging.ItemsPerPage);
+        return paged;
+    }
+
+    private static IEnumerable<ItemBrowserPageDto> MapItemsToItemBrowserPage(List<Item> itemsForBrowserPage)
+    {
+        return itemsForBrowserPage
             .Select(i => new ItemBrowserPageDto
             {
                 ItemId = i.ItemId,
@@ -126,16 +145,8 @@ public class ItemService : IItemService
                 Category = i.Category,
                 UploadDate = i.UploadDate,
                 City = i.Address?.City,
-            });
-
-        itemDtos = Filter(filters, itemDtos);
-
-        int count = itemDtos.Count();
-
-        itemDtos = itemDtos.Skip((paging.Page - 1) * paging.ItemsPerPage).Take(paging.ItemsPerPage);
-
-        var paged = new Paged<ItemBrowserPageDto>(itemDtos, paging.Page, count, paging.ItemsPerPage);
-        return paged;
+            })
+            .ToList();
     }
 
     private static IEnumerable<ItemBrowserPageDto> Filter(ItemsPageQuery filters, IEnumerable<ItemBrowserPageDto> itemDtos)
@@ -185,15 +196,28 @@ public class ItemService : IItemService
         return itemDto;
     }
 
+    public async Task<List<ItemBrowserPageDto>?> GetItemsWithSeveralIdsForBrowserPage(Guid userId)
+    {
+        var itemIds = await GetUserItemsIds(userId);
+        var items = await _context.Items.Where(x => itemIds.Contains(x.ItemId)).ToListAsync();
+
+        if (!items.Any())
+        {
+            return null;
+        }
+
+        return (List<ItemBrowserPageDto>?)MapItemsToItemBrowserPage(items);
+    }
+
     public async Task UpdateItem(ItemRequest itemRequest, Item item)
     {
-        var updatedItem = MapDtoToModel(itemRequest);
+        var updatedItem = await MapDtoToModel(itemRequest);
         _context.Entry(item).State = EntityState.Detached;
         _context.Entry(updatedItem).State = EntityState.Modified;
         await _context.SaveChangesAsync();
     }
 
-    private Item MapDtoToModel(ItemRequest itemRequest)
+    private async Task<Item> MapDtoToModel(ItemRequest itemRequest)
     {
         return new Item
         {
@@ -207,7 +231,7 @@ public class ItemService : IItemService
             To = itemRequest.To,
             UploadDate = itemRequest.UploadDate,
             UpdateDate = DateTime.Today,
-            Images = SaveImages(itemRequest.Name, itemRequest.Image).Result,
+            Images = await SaveImages(itemRequest.Name, itemRequest.Image),
         };
     }
 }

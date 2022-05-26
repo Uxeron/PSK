@@ -57,6 +57,20 @@ export const BrowseDataInitialValues = {
     items: []
 }
 
+export const UserDataInitialValues = {
+    name: "John",
+    surname: "Doe",
+    email: "email@test.com",
+    phoneNumber: "000000",
+    userId: "0",
+    image: "0",
+    address: {
+        country: "Lithuania",
+        city: "Vilnius",
+        streetName: "Verkiu g."
+    }
+}
+
 export const itemCategoryMapBrowse = {
     [ItemCategoryBrowse.All]: "All",
     [ItemCategoryBrowse.Drill]: "Drill",

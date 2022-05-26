@@ -20,6 +20,20 @@ export type BrowseData = {
     items: Array<BrowseItem>,
 }
 
+export type UserData = {
+    name: string,
+    surname: string,
+    email: string,
+    phoneNumber: string,
+    userId: string,
+    image: string,
+    address: {
+        country: string,
+        city: string,
+        streetName: string
+    }
+}
+
 export type BrowseItem = {
     itemId: string,
     name: string,

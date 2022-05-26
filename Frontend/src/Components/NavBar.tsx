@@ -55,7 +55,9 @@ export const NavBar = () => {
                             </button>
                                 {hover ?
                                     <div className="mr-8 absolute z-50 max-w-xs overflow-hidden bg-white rounded-lg shadow-lg dark:bg-gray-800">
-                                        <div className="block px-4 py-2 text-sm text-gray-800 transition-colors duration-200 transform dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-600">Welcome <span className="text-gray-600 dark:text-gray-400">{user?.name}</span></div>
+                                        <Link to="/user/3FA85F64-5717-4562-B3FC-2C963F66AFA6">
+                                            <div className="block px-4 py-2 text-sm text-gray-800 transition-colors duration-200 transform dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-600">Welcome <span className="text-gray-600 dark:text-gray-400">{user?.name}</span></div>
+                                        </Link>
                                         <a href="#" className="block px-4 py-2 text-sm text-gray-800 transition-colors duration-200 transform border-b dark:text-gray-200 dark:border-gray-500 hover:bg-gray-200 dark:hover:bg-gray-600">Settings</a>
                                         <button onClick={() => logout({ returnTo: window.location.origin })} className="block px-4 py-2 text-sm text-gray-800 transition-colors duration-200 transform border-b dark:text-gray-200 dark:border-gray-500 hover:bg-gray-200 dark:hover:bg-gray-600">Log out</button>
                                     </div> : <></>}</div> : <></>}

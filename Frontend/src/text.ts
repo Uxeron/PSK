@@ -9,6 +9,7 @@ export const t = {
         name: 'Nexus',
         browse: 'Browse',
         upload: 'Upload',
+        user: 'User'
     },
     landingPage: {
         title: {

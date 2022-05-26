@@ -24,7 +24,6 @@ class ItemService {
     }
     async getAll(props?: GetAllProps) {
         const url = `${BASE_URL}/Item${props ? `?` : ``}${props?.city ? `City=${props.city}&` : ``}${!props?.category ? `` : (props?.category == "All") ? `` : `Category=${props?.category}&`}${props?.page ? `Page=${props.page}&` : ``}ItemsPerPage=12`
-        
         return http.get(url, {
             headers: {
               'Authorization': `Bearer ${props?.accessToken}`

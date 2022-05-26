@@ -3,6 +3,7 @@
 using Data;
 using Data.Models;
 using Microsoft.EntityFrameworkCore;
+using WebAPI.Models;
 using WebAPI.Services.Interfaces;
 
 public class UserService : IUserService
@@ -14,13 +15,12 @@ public class UserService : IUserService
         _context = context;
     }
 
-    public async Task<User?> GetUser(Guid id) => 
+    public async Task<User?> GetUser(Guid id) =>
         await _context.Users
+            .Include(u => u.Address)
             .Where(i => i.UserId == id)
+            .Include(i => i.Address)
             .FirstOrDefaultAsync();
-
-    public async Task<List<User>> GetUsers() => 
-        await _context.Users.ToListAsync();
 
     public async Task CreateUser(User user)
     {

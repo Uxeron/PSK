@@ -8,6 +8,7 @@ using WebAPI.Services.Interfaces;
 using Data.Requests;
 using Data.Wrappers;
 using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
 
 [Route("api/[controller]")]
 [ApiController]
@@ -21,15 +22,23 @@ public class ItemController : ControllerBase
     }
 
     [HttpGet("{id}")]
-    public async Task<Item?> GetItem([FromRoute] Guid id)
+    public async Task<Item?> GetItem(Guid id)
     {
         return await _itemService.GetItem(id);
     }
 
-    [HttpPost, Authorize]
+    [HttpPost]
+    [Authorize]
     public async Task<IActionResult> CreateItem([FromBody] PartialItem item)
     {
-        Guid itemId = await _itemService.CreateItem(item);
+        var userId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
+        if (userId == null)
+        {
+            return Unauthorized();
+        }
+
+        item.UserId = userId;
+        var itemId = await _itemService.CreateItem(item);
         return Ok(itemId);
     }
 
@@ -40,13 +49,14 @@ public class ItemController : ControllerBase
     }
 
     [HttpGet("DetailsPage/{id}")]
-    public async Task<ItemDetailsScreenDto?> GetItemForDetailsScreen([FromRoute] Guid id)
+    public async Task<ItemDetailsScreenDto?> GetItemForDetailsScreen(Guid id)
     {
         return await _itemService.GetItemForDetailsScreen(id);
     }
 
     [HttpPut("{id}")]
-    public async Task<IActionResult> UpdateItem([FromRoute] Guid id, [FromBody] ItemRequest itemRequest)
+    [Authorize]
+    public async Task<IActionResult> UpdateItem(Guid id, [FromBody] ItemRequest itemRequest)
     {
         if (id != itemRequest.ItemId)
         {
@@ -57,6 +67,12 @@ public class ItemController : ControllerBase
         if (item == null)
         {
             return NotFound("Item with this id does not exist");
+        }
+
+        var userId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
+        if (item.User?.UserId != userId)
+        {
+            return Unauthorized();
         }
 
         await _itemService.UpdateItem(itemRequest, item);
