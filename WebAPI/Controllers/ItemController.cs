@@ -24,7 +24,8 @@ public class ItemController : ControllerBase
     [HttpGet("{id}")]
     public async Task<Item?> GetItem(Guid id)
     {
-        return await _itemService.GetItem(id);
+        var userId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
+        return await _itemService.GetItem(userId, id);
     }
 
     [HttpPost]
@@ -45,13 +46,15 @@ public class ItemController : ControllerBase
     [HttpGet]
     public async Task<Paged<ItemBrowserPageDto>?> GetItemsForBrowserPage([FromQuery] ItemsPageQuery filters, [FromQuery] PagingQuery paging)
     {
-        return await _itemService.GetItemsForBrowserPage(filters, paging);
+        var userId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
+        return await _itemService.GetItemsForBrowserPage(userId, filters, paging);
     }
 
     [HttpGet("DetailsPage/{id}")]
     public async Task<ItemDetailsScreenDto?> GetItemForDetailsScreen(Guid id)
     {
-        return await _itemService.GetItemForDetailsScreen(id);
+        var userId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
+        return await _itemService.GetItemForDetailsScreen(userId, id);
     }
 
     [HttpPut("{id}")]
@@ -63,13 +66,14 @@ public class ItemController : ControllerBase
             return BadRequest();
         }
 
-        var item = await _itemService.GetItem(id);
+        var userId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
+        
+        var item = await _itemService.GetItem(userId, id);
         if (item == null)
         {
             return NotFound("Item with this id does not exist");
         }
 
-        var userId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
         if (item.User?.UserId != userId)
         {
             return Unauthorized();

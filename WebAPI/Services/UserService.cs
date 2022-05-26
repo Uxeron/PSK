@@ -29,7 +29,7 @@ public class UserService : IUserService
 
     public async Task CreateUser(NewUser newUser)
     {
-        Address address = await _addressService.CreateAddress(newUser.Address);
+        Address address = await _addressService.CreateAddress(newUser.UserId, newUser.Address);
         User user = new()
         {
             Address = address,

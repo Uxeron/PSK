@@ -23,6 +23,11 @@ class LoggerInterceptor : IInterceptor
         var properties = arguments[0].GetType().GetProperties();
         var userIdProperty = arguments.SelectMany(arg => arg.GetType().GetProperties())
                                       .FirstOrDefault(val => val.Name == "UserId")?.GetValue(arguments[0]);
+        if (userIdProperty == null)
+        {
+            userIdProperty = arguments[0];
+        }
+
         var timestamp = DateTime.Now;
         invocation.Proceed();
 
