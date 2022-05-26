@@ -20,8 +20,13 @@ class LoggerInterceptor : IInterceptor
     public void Intercept(IInvocation invocation)
     {
         List<object> arguments = invocation.Arguments.ToList();
+        if(arguments[0] == null)
+        {
+            return;
+        }
         var properties = arguments[0].GetType().GetProperties();
-        var userIdProperty = arguments.SelectMany(arg => arg.GetType().GetProperties())
+        var userIdProperty = arguments.Where(x => x != null)
+                                      .SelectMany(arg => arg.GetType().GetProperties())
                                       .FirstOrDefault(val => val.Name == "UserId")?.GetValue(arguments[0]);
         if (userIdProperty == null)
         {
