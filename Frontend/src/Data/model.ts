@@ -56,3 +56,20 @@ export enum ItemCategoryBrowse {
     Screwdriver,
     Hammer,
 }
+
+export type User = {
+    userId: string,
+    name: string,
+    surname: string,
+    email: string,
+    phoneNumber: string,
+    image: string,
+    address: Adress,
+}
+
+export type Adress = {
+    addressId: string,
+    country: string,
+    city: string,
+    streetName: string,
+}

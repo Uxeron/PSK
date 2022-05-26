@@ -10,9 +10,11 @@ import { ItemConditionListBox } from './InputFields/ItemConditionListBox';
 import { TrueFalseSelection } from './InputFields/TrueFalseSelection';
 import { LocationListBox } from './InputFields/LocationListBox';
 import { t } from '../../text';
+import { useAuth0 } from '@auth0/auth0-react';
 
 export const UploadScreen = () => {
     const navigate = useNavigate();
+    const { user, getAccessTokenSilently } = useAuth0();
     const [uploadData, setUploadData] = useState(initialUploadData);
     const [onLoad, setOnLoad] = useState(false)
     const [name, setName] = useState('');
@@ -50,7 +52,15 @@ export const UploadScreen = () => {
             return false
         }
         setOnLoad(true);
-        ItemService.upload(uploadData, navigate);
+        
+        const initalize = async () => {
+            try {
+                await getAccessTokenSilently().then((token: string) => { ItemService.upload({accessToken: token, data: uploadData, navigate: navigate}) })
+            } catch (e) {
+                console.log(e);
+            }
+        };
+        initalize();
         toast('Your item is being processed at the moment.', {
             position: "top-right",
             autoClose: 5000,
@@ -71,7 +81,7 @@ export const UploadScreen = () => {
             condition: selectedCondition.name,
             category: selectedCategory.name,
             isToGiveAway: giveAwayState.name === 'Yes',
-            userId: '3fa85f64-5717-4562-b3fc-2c963f66afa6',
+            userId: user?.sub ?? '',
             addressId: '3fa85f64-5717-4562-b3fc-2c963f66afa6',
             tags: 'tags',
             image: filesContent.map(file => file.content).toString(),
@@ -130,7 +140,7 @@ export const UploadScreen = () => {
                 </div>
                 <div className="grid grid-cols-2 gap-4 h-[572px] z-50">
                     <div>
-                        <div className="self-center mr-4 ml-6 lg:ml-auto min-mx-sx z-50 max-w-lg overflow-visible bg-white rounded-lg drop-shadow-2xl dark:bg-gray-800">
+                        <div className="self-center mr-4 ml-6 lg:ml-auto min-mx-sx z-50 max-w-lg overflow-visible bg-white rounded-md drop-shadow-2xl dark:bg-gray-800">
                             <div className="p-4">
                                 <label className="text-gray-700 dark:text-gray-200" htmlFor="name">
                                     {t.uploadScreen.card1.nameLabel}
@@ -185,7 +195,7 @@ export const UploadScreen = () => {
                         </div>
                     </div>
                     <div>
-                        <div className="self-center h-max ml-4 mr-6 lg:mr-auto lg:mr-auto min-mx-sx max-w-lg overflow-hidden bg-white rounded-lg drop-shadow-2xl dark:bg-gray-800">
+                        <div className="self-center h-max ml-4 mr-6 lg:mr-auto lg:mr-auto min-mx-sx max-w-lg overflow-hidden bg-white rounded-md drop-shadow-2xl dark:bg-gray-800">
                             <div className="p-8">
                                 <label className="">
                                     {t.uploadScreen.card2.label}
