@@ -94,10 +94,14 @@ namespace Data.Migrations
                     b.Property<DateTime?>("From")
                         .HasColumnType("TEXT");
 
+                    b.Property<bool>("IsGivenAway")
+                        .HasColumnType("INTEGER");
+
                     b.Property<bool>("IsToGiveAway")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Name")
+                        .IsConcurrencyToken()
                         .IsRequired()
                         .HasColumnType("TEXT");
 

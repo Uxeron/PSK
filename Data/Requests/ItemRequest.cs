@@ -17,4 +17,5 @@ public class ItemRequest
     public string UserId { get; set; } = string.Empty;
     public Guid AddressId { get; set; }
     public string Image { get; set; } = string.Empty;
+    public bool IsGivenAway { get; set; }
 }

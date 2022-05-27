@@ -12,4 +12,5 @@ public class ItemBrowserPageDto
     public ItemCategory Category { get; set; }
     public DateTime UploadDate { get; set; }
     public string? City { get; set; } = string.Empty;
+    public bool IsGivenAway { get; set; }
 }
