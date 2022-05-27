@@ -48,6 +48,11 @@ public class Startup
 
     public void ConfigureContainer(ContainerBuilder b)
     {
+        if (!Configuration.GetValue<bool>("UseLogging"))
+        {
+            return;
+        }
+
         b.Register(i => new LoggerInterceptor());
         b.RegisterType<ItemService>()
             .AsImplementedInterfaces()
