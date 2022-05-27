@@ -202,6 +202,7 @@ public class ItemService : IItemService
                 Country = item.Address?.Country,
                 City = item.Address?.City,
                 StreetName = item.Address?.StreetName,
+                IsGivenAway = item.IsGivenAway,
         };
 
         return itemDto;
