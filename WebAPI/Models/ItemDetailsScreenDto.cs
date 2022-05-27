@@ -18,4 +18,5 @@ public class ItemDetailsScreenDto
     public string? Country { get; set; } = string.Empty;
     public string? City { get; set; } = string.Empty;
     public string? StreetName { get; set; } = string.Empty;
+    public bool IsGivenAway { get; set; }
 }
