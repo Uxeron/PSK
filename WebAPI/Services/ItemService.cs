@@ -247,6 +247,7 @@ public class ItemService : IItemService
             Condition = itemRequest.Condition,
             Category = itemRequest.Category,
             IsToGiveAway = itemRequest.IsToGiveAway,
+            IsGivenAway = itemRequest.IsGivenAway,
             From = itemRequest.From,
             To = itemRequest.To,
             UploadDate = itemRequest.UploadDate,
