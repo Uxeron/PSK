@@ -52,15 +52,17 @@ export const NavBar = () => {
                                 <div className="w-8 h-8 overflow-hidden border-2 border-gray-400 rounded-full">
                                     <img src="https://images.unsplash.com/photo-1517841905240-472988babdf9?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=334&q=80" className="object-cover w-full h-full" alt="avatar" />
                                 </div>
-                                <h3 className="mx-2 text-sm font-medium text-gray-700 dark:text-gray-200 md:hidden">Khatab wedaa</h3>
+                                <h3 className="mx-2 text-sm font-medium text-gray-700 dark:text-gray-200 md:hidden">Vardenis Pavardenis</h3>
                             </button>
                                 {hover ?
                                     <div className="mr-8 absolute z-50 max-w-xs overflow-hidden bg-white rounded-lg shadow-lg dark:bg-gray-800">
-                                        <div className="block px-4 py-2 text-sm text-gray-800 transition-colors duration-200 transform dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-600">Welcome <span className="text-gray-600 dark:text-gray-400">{user?.name}</span></div>
+                                        <Link to={`/user/${user?.sub}`}>
+                                            <div className="block px-4 py-2 text-sm text-gray-800 transition-colors duration-200 transform dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-600">Welcome <span className="text-gray-600 dark:text-gray-400">{user?.name}</span></div>
+                                        </Link>                                        
                                         <a href="#" className="block px-4 py-2 text-sm text-gray-800 transition-colors duration-200 transform border-b dark:text-gray-200 dark:border-gray-500 hover:bg-gray-200 dark:hover:bg-gray-600">Settings</a>
-                                        <button onClick={() => logout({ returnTo: window.location.origin })} className="block px-4 py-2 text-sm text-gray-800 transition-colors duration-200 transform border-b dark:text-gray-200 dark:border-gray-500 hover:bg-gray-200 dark:hover:bg-gray-600">Log out</button>
-                                    </div> : <></>}</div> : <></>}
-                            {isAuthenticated ? <></> : <LoginButton />}
+                                        <div onClick={() => logout({ returnTo: window.location.origin })} className="block px-4 py-2 text-sm text-gray-800 transition-colors duration-200 transform border-b dark:text-gray-200 dark:border-gray-500 hover:bg-gray-200 dark:hover:bg-gray-600">Log out</div>
+                                    </div> : undefined}</div> : undefined}
+                            {isAuthenticated ? undefined : <LoginButton />}
                         </div>
 
                     </div>

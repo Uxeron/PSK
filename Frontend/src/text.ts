@@ -15,7 +15,7 @@ export const t = {
             text1: 'Platform to enrich your',
             text2: 'everyday life',
         },
-        subtitle: 'Anim aute id magna aliqua ad ad non deserunt sunt. Qui irure qui lorem cupidatat commodo. Elit sunt amet fugiat veniam occaecat fugiat aliqua.',
+        subtitle: 'Nexus is your platform for pre-owned items you’ll love. One community and a whole lot of easy-to-get products. Ready to get started? Join us!',
         button1: 'Get started',
         button2: 'Our Github repo',
         infoSection: {
@@ -25,23 +25,23 @@ export const t = {
             features: [
                 {
                     name: 'Broad, community-based market',
-                    description: 'Lorem ipsum, dolor sit amet consectetur adipisicing elit. Maiores impedit perferendis suscipit eaque, iste dolor cupiditate blanditiis ratione.',
+                    description: "It's always easier and more comfortable to work with the ones you relate to, not big some random big coorporations. Borrow to and from people just like you!",
                     icon: GlobeAltIcon
                 },
                 {
                     name: 'Trust based communication',
-                    description: 'Lorem ipsum, dolor sit amet consectetur adipisicing elit. Maiores impedit perferendis suscipit eaque, iste dolor cupiditate blanditiis ratione.',
+                    description: "We believe in an open community and we are not interfering into the communication of our clients. If you find an item you like - it's all up to you how you wanna handle the trade!",
                     icon: ScaleIcon
+                },
+                {
+                    name: 'Less useless consumption',
+                    description: "Why buy many items that you are not even gonna use in a month? Extra spendings, using up precious space and generally not good for the environment. Be the game changer and reuse what's still great!",
+                    icon: AnnotationIcon,
                 },
                 {
                     name: 'Transparency and openiness',
                     description: 'Lorem ipsum, dolor sit amet consectetur adipisicing elit. Maiores impedit perferendis suscipit eaque, iste dolor cupiditate blanditiis ratione.',
                     icon: LightningBoltIcon,
-                },
-                {
-                    name: 'Less useless consumption',
-                    description: 'Lorem ipsum, dolor sit amet consectetur adipisicing elit. Maiores impedit perferendis suscipit eaque, iste dolor cupiditate blanditiis ratione.',
-                    icon: AnnotationIcon,
                 },
             ]
         }
@@ -65,5 +65,9 @@ export const t = {
             input: ['Drop files to upload or', 'browse'],
         },
         submitButton: 'Upload an item'
+    },
+    detailsScreen: {
+        title: 'Details of your item',
+        editTitle: 'Edit details of your item'
     },
 };

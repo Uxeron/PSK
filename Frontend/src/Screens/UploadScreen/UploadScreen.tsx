@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useFilePicker } from 'use-file-picker';
-import { initialUploadData, itemCategories, itemConditions, mockLocation, toGiveAway } from '../../Data/utils';
+import { initialUploadData, itemCategories, itemConditions, mockLocation, toGiveAway, UserDataInitialValues } from '../../Data/utils';
 import ItemService from '../../Services/ItemService';
 import { useNavigate } from 'react-router-dom';
 import { Spinner } from '../../Components/Spinner';
@@ -11,18 +11,20 @@ import { TrueFalseSelection } from './InputFields/TrueFalseSelection';
 import { LocationListBox } from './InputFields/LocationListBox';
 import { t } from '../../text';
 import { useAuth0 } from '@auth0/auth0-react';
+import UserService from '../../Services/UserService';
+import { UploadData, User } from '../../Data/model';
 
 export const UploadScreen = () => {
     const navigate = useNavigate();
     const { user, getAccessTokenSilently } = useAuth0();
-    const [uploadData, setUploadData] = useState(initialUploadData);
+    const [uploadData, setUploadData] = useState<UploadData>(initialUploadData);
+    const [userData, setUserData] = useState<User>(UserDataInitialValues)
     const [onLoad, setOnLoad] = useState(false)
     const [name, setName] = useState('');
     const [description, setDescription] = useState('');
     const [selectedCategory, setSelectedCategory] = useState(itemCategories[0])
     const [selectedCondition, setSelectedCondition] = useState(itemConditions[0])
     const [giveAwayState, setGiveAwayState] = useState(toGiveAway[0])
-    const [tags, setTags] = useState('')
     const [location, setLocation] = useState(mockLocation[0])
     const [openFileSelector, { filesContent, loading, errors }] = useFilePicker({
         readAs: "DataURL",
@@ -82,8 +84,7 @@ export const UploadScreen = () => {
             category: selectedCategory.name,
             isToGiveAway: giveAwayState.name === 'Yes',
             userId: user?.sub ?? '',
-            addressId: '3fa85f64-5717-4562-b3fc-2c963f66afa6',
-            tags: 'tags',
+            addressId: userData.address.addressId,
             image: filesContent.map(file => file.content).toString(),
         })
     }
@@ -93,6 +94,17 @@ export const UploadScreen = () => {
     useEffect(() => applyValuesToState(), [filesContent, name, description, selectedCategory, selectedCondition, location])
 
     useEffect(() => setIsImageMissing(false), [filesContent.length])
+
+    useEffect(() => {
+        const initalize = async () => {
+            try {
+                await getAccessTokenSilently().then((token) => { UserService.getById({ accessToken: token, id: user?.sub ?? '' }).then((val) => setUserData(val.data)) })
+            } catch (e) {
+                console.log(e);
+            }
+        };
+        initalize();
+    }, [getAccessTokenSilently]);
 
     const areFieldsValid = () => {
         return isNameValid && isDescriptionValid && !isImageMissing;
@@ -161,13 +173,6 @@ export const UploadScreen = () => {
                                         {t.uploadScreen.card1.categoryLabel}
                                     </label>
                                     <ItemCategoryListBox setHandler={setSelectedCategory} value={selectedCategory} handleChange={handleChange} />
-                                </div>
-
-                                <div className="mt-4 top-16">
-                                    <label className="text-gray-700 dark:text-gray-200" htmlFor="name">
-                                        {t.uploadScreen.card1.tagsLabel}
-                                    </label>
-                                    <input value={tags} onChange={event => { setTags(event?.target.value); handleChange() }} id="emailAddress" type="text" className="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-200 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-orange-400 focus:ring-orange-300 focus:ring-opacity-40 dark:focus:border-orange-300 focus:outline-none focus:ring" />
                                 </div>
 
                                 <div className="w-72 mt-4 top-16">
