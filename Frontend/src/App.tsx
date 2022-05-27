@@ -2,7 +2,7 @@ import React from 'react';
 import { ToastContainer } from 'react-toastify';
 import { Route, Routes } from 'react-router-dom'
 import { BrowseScreen } from './Screens/BrowseScreen/BrowseScreen';
-import { DetailsScreen } from './Screens/DetailsScreen';
+import { DetailsScreen } from './Screens/DetailsScreen/DetailsScreen';
 import { NotFound } from './Screens/NotFound';
 import { UploadScreen } from './Screens/UploadScreen/UploadScreen';
 import { UserScreen } from './Screens/UserScreen';
@@ -11,7 +11,7 @@ import { NavBar } from './Components/NavBar';
 import { ProtectedRoute } from './Auth/ProtectedRoute';
 import { LandingPage } from './Screens/LandingPage';
 import { RegisterScreen } from './Screens/RegisterScreen';
-import { EditDetailsScreen } from './Screens/EditDetailsScreen';
+import { EditDetailsScreen } from './Screens/DetailsScreen/EditDetailsScreen';
 import { useAuth0 } from '@auth0/auth0-react';
 import { Spinner } from './Components/Spinner';
 

@@ -24,7 +24,7 @@ export const UploadScreen = () => {
     const [description, setDescription] = useState('');
     const [selectedCategory, setSelectedCategory] = useState(itemCategories[0])
     const [selectedCondition, setSelectedCondition] = useState(itemConditions[0])
-    const [giveAwayState, setGiveAwayState] = useState(toGiveAway[0])
+    const [giveAwayState, setGiveAwayState] = useState(toGiveAway[1])
     const [location, setLocation] = useState(mockLocation[0])
     const [openFileSelector, { filesContent, loading, errors }] = useFilePicker({
         readAs: "DataURL",

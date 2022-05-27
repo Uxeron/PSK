@@ -2,12 +2,15 @@ import { useAuth0 } from "@auth0/auth0-react";
 import { Dialog, Transition } from "@headlessui/react";
 import React, { Fragment, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { Spinner } from "../Components/Spinner";
-import { DetailsScreenItemProps, ItemCategory } from "../Data/model";
-import { itemCategoryMap, itemConditionMap, mapperFullToEdit } from "../Data/utils";
-import ItemService from "../Services/ItemService";
-import { t } from "../text";
+import { Spinner } from "../../Components/Spinner";
+import { DetailsScreenItemProps, ItemCategory, ItemCondition } from "../../Data/model";
+import { mapperFullToEdit } from "../../Data/utils";
+import ItemService from "../../Services/ItemService";
+import { t } from "../../text";
 import { initialDetailScreenItem, Row } from "./DetailsScreen";
+import { ItemCategoryListBoxDetails } from "./ItemCategoryListBoxDetails";
+import { ItemConditionListBoxDetails } from "./ItemConditionListBoxDetails";
+
 
 
 export const EditDetailsScreen = () => {
@@ -17,7 +20,8 @@ export const EditDetailsScreen = () => {
     const [data, setData] = useState<DetailsScreenItemProps>(initialDetailScreenItem)
     const [initialData, setInitialData] = useState<DetailsScreenItemProps>(initialDetailScreenItem)
     const [tempData, setTempData] = useState<DetailsScreenItemProps>(initialDetailScreenItem)
-
+    const [category, setCategory] = useState<{ name: ItemCategory; }>({ name: data.category })
+    const [condition, setCondition] = useState<{ name: ItemCondition; }>({ name: data.condition })
     const [name, setName] = useState<string>('')
     const [loading, setLoading] = useState<boolean>(false)
     const [description, setDescription] = useState<string>('')
@@ -40,7 +44,6 @@ export const EditDetailsScreen = () => {
             }
         };
         submit();
-        navigate(`/details/${itemId}/edit`)
     }
 
 
@@ -53,7 +56,7 @@ export const EditDetailsScreen = () => {
     useEffect(() => {
         const initalize = async () => {
             try {
-                await getAccessTokenSilently().then((token: string) => { ItemService.getById({ accessToken: token, id: itemId ?? '' }).then((val) => { setInitialData(val); setData(val) }) })
+                await getAccessTokenSilently().then((token: string) => { ItemService.getById({ accessToken: token, id: itemId ?? '' }).then((val) => { setInitialData(val); setData(val); }) })
             } catch (e) {
                 console.log(e);
             }
@@ -73,7 +76,7 @@ export const EditDetailsScreen = () => {
                 await getAccessTokenSilently().then((token: string) => {
                     ItemService.getById({ accessToken: token, id: itemId ?? '' }).then((res) => {
                         setTempData(res);
-                        (res.name === data.name && res.description === data.description) ? ItemService.put({ accessToken: token, itemId: itemId ?? '', data: mapperFullToEdit({ ...data, name, description }), navigate }).then(() => setLoading(false)) :
+                        (res.name === data.name && res.description === data.description && res.category === data.category && res.condition === data.condition) ? ItemService.put({ accessToken: token, itemId: itemId ?? '', data: mapperFullToEdit({ ...data, name, description, category: category.name, condition: condition.name }), navigate }).then(() => setLoading(false)) :
                             openModal()
                     })
                 })
@@ -200,9 +203,25 @@ export const EditDetailsScreen = () => {
                             <input onBlur={(event) => setDescription(event.target.value)} className="font-bold text-gray-700 dark:text-gray-200" placeholder={data.description ?? tempData.description} />
                         </div>
                     </div>
-                    <Row label={t.uploadScreen.card1.categoryLabel} item={itemCategoryMap[data.category]} />
-                    <Row label={t.uploadScreen.card1.conditionLabel} item={itemConditionMap[data.condition]} />
+                    {/* <Row label={t.uploadScreen.card1.categoryLabel} item={itemCategoryMap[data.category]} /> */}
 
+                    <div className="grid grid-cols-2 gap-4 mb-4">
+                        <div className="ml-2 mr-auto">
+                            <label className="text-gray-700 dark:text-gray-200" htmlFor="name">
+                                {t.uploadScreen.card1.categoryLabel}
+                            </label>
+                        </div>
+                        <ItemCategoryListBoxDetails value={category} setHandler={setCategory} inBrowse={true} />
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-4 mb-4">
+                        <div className="ml-2 mr-auto">
+                            <label className="text-gray-700 dark:text-gray-200" htmlFor="name">
+                                {t.uploadScreen.card1.conditionLabel}
+                            </label>
+                        </div>
+                        <ItemConditionListBoxDetails value={condition} setHandler={setCondition} inBrowse={true} />
+                    </div>
                 </div>
             </div>
             <div className='w-max mx-auto'>
@@ -212,13 +231,6 @@ export const EditDetailsScreen = () => {
 
             </div>
         </div>
-        {/* <div className="flex flex-col w-48 mx-auto mt-4">
-            <input onBlur={(event) => setName(event.target.value)} placeholder={data.name} className="border-2 my-2" />
-            <input onBlur={(event) => setDescription(event.target.value)} placeholder={data.description} className="border-2 my-2" />
-            <button onClick={() => handleSubmit()} className='px-4 py-2 font-medium tracking-wide text-white capitalize transition-colors duration-200 transform bg-orange-600 rounded-md hover:bg-orange-500 focus:outline-none focus:ring focus:ring-orange-300 focus:ring-opacity-80'>
-                submit
-            </button>
-        </div> */}
     </>
     )
 }

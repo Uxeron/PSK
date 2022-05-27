@@ -12,9 +12,9 @@ import { t } from '../../text';
 
 export const BrowseScreen = () => {
 
-    // const [items, setItems] = useState([] as BrowseData[])
     const [currentPage, setCurrentPage] = useState<number>(1)
     const [data, setData] = useState<BrowseData>(BrowseDataInitialValues)
+    const [searchPhrase, setSearchPhrase] = useState<string>('')
     const [category, setCategory] = useState<{ name: ItemCategory; }>(itemCategories[0])
     const [condition, setCondition] = useState<{ name: ItemCondition; }>(itemConditions[0])
 
@@ -36,12 +36,12 @@ export const BrowseScreen = () => {
         return <Spinner />;
     }
 
-    const getFiltered = () => ItemService.getAll({ accessToken, page: currentPage, category: itemCategoryMapBrowse[category.name] }).then((val) => setData(val));
+    const getFiltered = () => ItemService.getAll({ accessToken, page: currentPage, category: itemCategoryMapBrowse[category.name], searchPhrase }).then((val) => setData(val));
 
     return (
         <>
             <div className="w-[60%] min-w-[1024px] p-4 flex flex-row mb-12 mt-6 mx-auto lg:ml-auto min-mx-sx z-50 overflow-visible bg-white rounded-lg drop-shadow-2xl dark:bg-gray-800">
-                <input id="email" type="text" className="px-4 py-2 text-gray-700 bg-white border rounded-md sm:mx-2 dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-orange-400 dark:focus:border-orange-300 focus:outline-none focus:ring focus:ring-orange-300 focus:ring-opacity-40" placeholder="Search by name or tag..." />
+                <input onChange={(event) => setSearchPhrase(event.target.value)} id="search" type="text" className="px-4 py-2 text-gray-700 bg-white border rounded-md sm:mx-2 dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-orange-400 dark:focus:border-orange-300 focus:outline-none focus:ring focus:ring-orange-300 focus:ring-opacity-40" placeholder="Search by name..." />
 
                 <ItemCategoryListBoxBrowse value={category} setHandler={setCategory} />
                 <ItemConditionListBoxBrowse value={condition} setHandler={setCondition} />
@@ -53,7 +53,7 @@ export const BrowseScreen = () => {
             <div className="m-auto min-w-[1000px] max-w-7xl grid grid-cols-4 gap-12 mb-16">
                 {data.items.map((item) => { return <ItemCard key={item.itemId} id={item.itemId} name={item.name} description={item.description} image={item.image} /> })}
             </div>
-            <Pagination amountOfPages={data.paging.numOfPages} currentPage={data.paging.page} setCurrentPage={setCurrentPage} />
+            {data.items.length !== 0 ? <Pagination amountOfPages={data.paging.numOfPages} currentPage={data.paging.page} setCurrentPage={setCurrentPage} /> : undefined}
         </>
 
     );
