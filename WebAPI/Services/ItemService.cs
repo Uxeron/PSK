@@ -102,7 +102,7 @@ public class ItemService : IItemService
             .FirstOrDefaultAsync();
 
     public async Task<List<Item>> GetItems() =>
-        await _context.Items
+        await _context.Items.Where(i => i.To == null || DateTime.Compare(i.To.Value, DateTime.Now) < 0 || i.IsGivenAway == false)
             .Include(i => i.User)
             .Include(x => x.Address)
             .Include(x => x.Images)
@@ -126,7 +126,7 @@ public class ItemService : IItemService
 
         var itemDtos = MapItemsToItemBrowserPage(itemsForBrowserPage);
 
-        if(searchPhrase != null)
+        if (searchPhrase != null)
         {
             itemDtos = itemDtos.Where(x => x.Name.Contains(searchPhrase));
         }
@@ -150,6 +150,7 @@ public class ItemService : IItemService
                 Name = i.Name,
                 Description = i.Description,
                 Image = i.Images.Any() ? i.Images.First().Prefix + ',' + Convert.ToBase64String(i.Images.First().ThumbnailImageData) : string.Empty,
+                IsGivenAway = i.IsGivenAway,
                 Condition = i.Condition,
                 Category = i.Category,
                 UploadDate = i.UploadDate,
@@ -252,6 +253,7 @@ public class ItemService : IItemService
             Condition = itemRequest.Condition,
             Category = itemRequest.Category,
             IsToGiveAway = itemRequest.IsToGiveAway,
+            IsGivenAway = itemRequest.IsGivenAway,
             From = itemRequest.From,
             To = itemRequest.To,
             UploadDate = itemRequest.UploadDate,

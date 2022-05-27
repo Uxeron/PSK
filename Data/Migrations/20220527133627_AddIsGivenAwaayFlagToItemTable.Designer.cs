@@ -3,6 +3,7 @@ using System;
 using Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Data.Migrations
 {
     [DbContext(typeof(PskContext))]
-    partial class PskContextModelSnapshot : ModelSnapshot
+    [Migration("20220527133627_AddIsGivenAwaayFlagToItemTable")]
+    partial class AddIsGivenAwaayFlagToItemTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "6.0.3");
@@ -93,9 +95,6 @@ namespace Data.Migrations
 
                     b.Property<DateTime?>("From")
                         .HasColumnType("TEXT");
-
-                    b.Property<bool>("IsGivenAway")
-                        .HasColumnType("INTEGER");
 
                     b.Property<bool>("IsToGiveAway")
                         .HasColumnType("INTEGER");
