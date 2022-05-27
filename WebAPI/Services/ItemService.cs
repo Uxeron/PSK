@@ -209,7 +209,12 @@ public class ItemService : IItemService
     public async Task<List<ItemBrowserPageDto>?> GetItemsWithSeveralIdsForBrowserPage(string userId)
     {
         var itemIds = await GetUserItemsIds(userId);
-        var items = await _context.Items.Where(x => itemIds.Contains(x.ItemId)).ToListAsync();
+        var items = new List<Item>();
+
+        foreach(var id in itemIds)
+        {
+            items.Add(await GetItem(userId, id));
+        }
 
         if (!items.Any())
         {
