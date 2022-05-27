@@ -3,40 +3,11 @@ import React, { useEffect, useState } from "react";
 import DatePicker from "react-datepicker";
 import { useNavigate, useParams } from "react-router-dom";
 import { Spinner } from "../Components/Spinner";
-import { ItemCategory, ItemCondition } from "../Data/model";
-import { itemCategoryMap, itemConditionMap } from "../Data/utils";
+import { DetailsScreenItemProps, ItemCategory, ItemCondition } from "../Data/model";
+import { itemCategoryMap, itemConditionMap, mapperFullToEdit, mockAdress } from "../Data/utils";
 import ItemService from "../Services/ItemService";
 import { t } from "../text";
 import "react-datepicker/dist/react-datepicker.css";
-
-export type DetailsScreenItemProps = {
-    address: {
-        addressId: string,
-        country: string,
-        city: string,
-        streetName: string,
-    } | null,
-    category: ItemCategory,
-    condition: ItemCondition,
-    description: string,
-    from: string,
-    images: [{ imageId: string, imageData: string, thumbnailImageData: string, name: string, prefix: string }] | null,
-    isToGiveAway: boolean,
-    itemId: string,
-    name: string,
-    to: string,
-    updateDate: string,
-    uploadDate: "2022-04-28T00:57:28.4573801"
-    user: {
-        userId: string,
-        name: string,
-        surname: string,
-        email: string,
-        phoneNumber: string,
-        image: [{ imageId: string, imageData: string, thumbnailImageData: string, name: string, prefix: string }],
-        address: null
-    } | null,
-}
 
 export const initialDetailScreenItem: DetailsScreenItemProps = {
     address: {
@@ -48,11 +19,12 @@ export const initialDetailScreenItem: DetailsScreenItemProps = {
     category: ItemCategory.Drill,
     condition: ItemCondition.Good,
     description: "string",
-    from: "string",
     images: null,
     isToGiveAway: true,
+    isGivenAway: false,
     itemId: "string",
     name: "string",
+    from: "string",
     to: "string",
     updateDate: "string",
     uploadDate: "2022-04-28T00:57:28.4573801",
@@ -63,7 +35,7 @@ export const initialDetailScreenItem: DetailsScreenItemProps = {
         email: 'string',
         phoneNumber: 'string',
         image: [{ imageId: 'string', imageData: 'string', thumbnailImageData: 'string', name: 'string', prefix: 'string' }],
-        address: null
+        address: mockAdress
     },
 }
 
@@ -79,10 +51,21 @@ export const DetailsScreen = () => {
         return <Spinner />
     }
 
+    const handleEdit = () => {
+        const initalize = async () => {
+            try {
+                await getAccessTokenSilently().then((token: string) => { ItemService.put({ accessToken: token, itemId: itemId ?? '', data: mapperFullToEdit({ ...data, from: new Date().toISOString(), to: date.toISOString() ?? new Date().toISOString() }), navigate }) })
+            } catch (e) {
+                console.log(e);
+            }
+        };
+        initalize();
+    }
+    console.log(itemId?.toUpperCase())
     useEffect(() => {
         const initalize = async () => {
             try {
-                await getAccessTokenSilently().then((token: string) => { ItemService.getById({ accessToken: token, id: itemId ?? '' }).then((val) => setData(val)) })
+                await getAccessTokenSilently().then((token: string) => { ItemService.getById({ accessToken: token, id: itemId ?? '' }).then((val) => { setData(val); setDate(new Date(val.to)) }) })
             } catch (e) {
                 console.log(e);
             }
@@ -94,8 +77,13 @@ export const DetailsScreen = () => {
         <>
             <div className="container px-6 pt-12 pb-16 mx-auto text-center">
                 <h1 className="text-4xl font-bold text-gray-800 dark:text-white md:text-5xl">
-                    {t.uploadScreen.title}
+                    {t.detailsScreen.title}
                 </h1>
+
+                <p className="text-md font-bold text-orange-800 dark:text-white md:text-lg">
+                    {new Date(data.to ?? '').getTime() > new Date().getTime() ? "item is currently taken  " : ""}
+                    {data.isGivenAway ? "item is given away" : ""}
+                </p>
                 <div className="max-w-4xl mx-auto">
                 </div>
             </div>
@@ -112,7 +100,7 @@ export const DetailsScreen = () => {
                             <Row label={t.uploadScreen.card1.conditionLabel} item={itemConditionMap[data.condition]} />
                             <Row label={"Address:"} item={data.address?.streetName ?? ''} />
                             <Row label={"User:"} item={data.user?.name ?? ''} />
-                            {data.user?.userId === user?.sub && <div className="pb-4 mx-auto ">
+                            {(data.user?.userId === user?.sub && !data.isGivenAway) && <div className="pb-4 mx-auto ">
                                 <button onClick={() => navigate(`/details/${itemId}/edit`)} className="px-4 py-2 font-medium tracking-wide text-white capitalize transition-colors duration-200 transform bg-orange-600 rounded-md hover:bg-orange-500 focus:outline-none focus:ring focus:ring-orange-300 focus:ring-opacity-80">
                                     {"Edit"}
                                 </button>
@@ -128,24 +116,30 @@ export const DetailsScreen = () => {
                                 {"Owner actions: "}
                             </h1>
                         </div>
-                        <div className=" px-4 pb-4 ml-2 mr-auto">
-                            {/* TODO: add actual user contacts */}
-                            <button onClick={() => setShowDatePicker(true)} className="px-4 py-2 font-medium tracking-wide text-white capitalize transition-colors duration-200 transform bg-orange-600 rounded-md hover:bg-orange-500 focus:outline-none focus:ring focus:ring-orange-300 focus:ring-opacity-80">
-                                {"Mark as occupied"}
-                            </button>
-                        </div>
-                        {showDatePicker &&
-
-                            <div className="flex">
-                                <div className="ml-6">
-                                    <label className="text-gray-700 dark:text-gray-200" htmlFor="name">
-                                        {'Occupied till: '}
-                                    </label>
-                                </div>
-                                <div className="ml-2">
-                                    <DatePicker selected={date} onChange={(d) => setDate(d ?? date)} />
-                                </div>
+                        {!data.isToGiveAway ? <>
+                            <div className=" px-4 pb-4 ml-2 mr-auto">
+                                <button onClick={() => handleEdit()} className="px-4 py-2 font-medium tracking-wide text-white capitalize transition-colors duration-200 transform bg-orange-600 rounded-md hover:bg-orange-500 focus:outline-none focus:ring focus:ring-orange-300 focus:ring-opacity-80">
+                                    {"Mark as occupied"}
+                                </button>
+                            </div>
+                            {showDatePicker &&
+                                <div className="flex">
+                                    <div className="ml-6">
+                                        <label className="text-gray-700 dark:text-gray-200" htmlFor="name">
+                                            {'Occupied till: '}
+                                        </label>
+                                    </div>
+                                    <div className="ml-2">
+                                        <DatePicker selected={date} onChange={(d) => setDate(d ?? date)} />
+                                    </div>
+                                </div>}
+                        </> :
+                            <div className=" px-4 pb-4 ml-2 mr-auto">
+                                <button onClick={() => { data.isGivenAway = !data.isGivenAway; handleEdit() }} className="px-4 py-2 font-medium tracking-wide text-white capitalize transition-colors duration-200 transform bg-orange-600 rounded-md hover:bg-orange-500 focus:outline-none focus:ring focus:ring-orange-300 focus:ring-opacity-80">
+                                    {data.isGivenAway ? "Mark as not given away" : "Mark as given away"}
+                                </button>
                             </div>}
+
 
                         <div className="p-4 ml-2 mr-auto">
                             <h1 className="text-lg font-bold text-gray-800 dark:text-white">
@@ -170,7 +164,7 @@ export const DetailsScreen = () => {
     )
 }
 
-const Row = (props: { label: string, item: string }) => {
+export const Row = (props: { label: string, item: string }) => {
     const { label, item } = props;
     return (
         <div className="grid grid-cols-2 gap-4 mb-4">

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { useAuth0 } from '@auth0/auth0-react'
 import background from '../Assets/bg3.jpg'
 import { Spinner } from '../Components/Spinner'
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { t } from '../text'
 import UserService from '../Services/UserService'
 
@@ -78,7 +78,9 @@ export const LandingPage = () => {
                   </div>
                   <div className="mt-3 sm:mt-0 sm:ml-3">
                     <a
-                      href="#"
+                      href="https://github.com/Uxeron/PSK"
+                      target="_blank"
+                      rel="noreferrer"
                       className="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-orange-700 bg-orange-100 hover:bg-orange-200 md:py-4 md:text-lg md:px-10"
                     >
                       {t.landingPage.button2}
