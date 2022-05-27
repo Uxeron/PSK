@@ -15,7 +15,7 @@ type Props = {
     inBrowse?: boolean;
 }
 export const ItemCategoryListBox = (props: Props) => {
-    const {setHandler, value, handleChange, inBrowse} = props;
+    const { setHandler, value, handleChange, inBrowse } = props;
 
     return (
         <Listbox value={value} onChange={(val) => { setHandler(val); handleChange() }}>

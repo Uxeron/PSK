@@ -54,7 +54,7 @@ export const DetailsScreen = () => {
     const handleEdit = () => {
         const initalize = async () => {
             try {
-                await getAccessTokenSilently().then((token: string) => { ItemService.put({ accessToken: token, itemId: itemId ?? '', data: mapperFullToEdit({ ...data, from: new Date().toISOString(),  to: date.toISOString() ?? new Date().toISOString() }), navigate }) })
+                await getAccessTokenSilently().then((token: string) => { ItemService.put({ accessToken: token, itemId: itemId ?? '', data: mapperFullToEdit({ ...data, from: new Date().toISOString(), to: date.toISOString() ?? new Date().toISOString() }), navigate }) })
             } catch (e) {
                 console.log(e);
             }
@@ -65,7 +65,7 @@ export const DetailsScreen = () => {
     useEffect(() => {
         const initalize = async () => {
             try {
-                await getAccessTokenSilently().then((token: string) => { ItemService.getById({ accessToken: token, id: itemId ?? '' }).then((val) => { setData(val); setDate(new Date(val.to)) }) })
+                await getAccessTokenSilently().then((token: string) => { ItemService.getById({ accessToken: token, id: itemId ?? '' }).then((val) => { setData(val); }) })
             } catch (e) {
                 console.log(e);
             }
@@ -111,39 +111,44 @@ export const DetailsScreen = () => {
                 <div className="w-full" >
                     <div className="mx-auto lg:ml-auto min-mx-sx z-50 max-w-xl overflow-visible bg-white rounded-lg drop-shadow-2xl dark:bg-gray-800">
 
-                        <div className="p-4 ml-2 mr-auto">
+                        {user?.sub === data.user?.userId ? <> <div className="p-4 ml-2 mr-auto">
                             <h1 className="text-lg font-bold text-gray-800 dark:text-white">
                                 {"Owner actions: "}
                             </h1>
                         </div>
-                        {!data.isToGiveAway ? <>
-                            <div className=" px-4 pb-4 ml-2 mr-auto">
-                                <button onClick={() => handleEdit()} className="px-4 py-2 font-medium tracking-wide text-white capitalize transition-colors duration-200 transform bg-orange-600 rounded-md hover:bg-orange-500 focus:outline-none focus:ring focus:ring-orange-300 focus:ring-opacity-80">
-                                    {"Mark as occupied"}
-                                </button>
-                            </div>
-                            {showDatePicker &&
-                                <div className="flex">
-                                    <div className="ml-6">
-                                        <label className="text-gray-700 dark:text-gray-200" htmlFor="name">
-                                            {'Occupied till: '}
-                                        </label>
-                                    </div>
-                                    <div className="ml-2">
-                                        <DatePicker selected={date} onChange={(d) => setDate(d ?? date)} />
-                                    </div>
-                                </div>}
-                        </> :
-                            <div className=" px-4 pb-4 ml-2 mr-auto">
-                                <button onClick={() => { data.isGivenAway = !data.isGivenAway; handleEdit() }} className="px-4 py-2 font-medium tracking-wide text-white capitalize transition-colors duration-200 transform bg-orange-600 rounded-md hover:bg-orange-500 focus:outline-none focus:ring focus:ring-orange-300 focus:ring-opacity-80">
-                                    {data.isGivenAway ? "Mark as not given away" : "Mark as given away"}
-                                </button>
-                            </div>}
+                            {!data.isToGiveAway ? <>
+                                <div className=" px-4 pb-4 ml-2 mr-auto">
+                                    <button onClick={() => handleEdit()} className="px-4 py-2 font-medium tracking-wide text-white capitalize transition-colors duration-200 transform bg-orange-600 rounded-md hover:bg-orange-500 focus:outline-none focus:ring focus:ring-orange-300 focus:ring-opacity-80">
+                                        {"Mark as occupied"}
+                                    </button>
+                                </div>
+                                {showDatePicker &&
+                                    <div className="flex">
+                                        <div className="ml-6">
+                                            <label className="text-gray-700 dark:text-gray-200" htmlFor="name">
+                                                {'Occupied till: '}
+                                            </label>
+                                        </div>
+                                        <div className="ml-2">
+                                            <DatePicker selected={date} onChange={(d) => setDate(d ?? date)} />
+                                        </div>
+                                    </div>}
+                            </> :
+                                <div className=" px-4 pb-4 ml-2 mr-auto">
+                                    <button onClick={() => { data.isGivenAway = !data.isGivenAway; handleEdit() }} className="px-4 py-2 font-medium tracking-wide text-white capitalize transition-colors duration-200 transform bg-orange-600 rounded-md hover:bg-orange-500 focus:outline-none focus:ring focus:ring-orange-300 focus:ring-opacity-80">
+                                        {data.isGivenAway ? "Mark as not given away" : "Mark as given away"}
+                                    </button>
+                                </div>}</> : undefined}
 
 
                         <div className="p-4 ml-2 mr-auto">
                             <h1 className="text-lg font-bold text-gray-800 dark:text-white">
                                 {"Contact on:"}
+                            </h1>
+                        </div>
+                        <div className="px-4 pb-4 ml-2 mr-auto">
+                            <h1 className="text-md text-gray-800 dark:text-white">
+                                {data.user?.phoneNumber}
                             </h1>
                         </div>
                         <div className="px-4 pb-4 ml-2 mr-auto">
@@ -153,7 +158,7 @@ export const DetailsScreen = () => {
                             </button>
                         </div>
                         <div className="px-4 pb-4 ml-2 mr-auto">
-                            <button onClick={() => window.open('mailto:email@example.com?subject=Interested%20in%20your%20Nexus%20listing!', "_blank")} className="px-4 py-2 font-medium tracking-wide text-white capitalize transition-colors duration-200 transform bg-orange-600 rounded-md hover:bg-orange-500 focus:outline-none focus:ring focus:ring-orange-300 focus:ring-opacity-80">
+                            <button onClick={() => window.open(`mailto:${data.user?.email}?subject=Interested%20in%20your%20Nexus%20listing!`, "_blank")} className="px-4 py-2 font-medium tracking-wide text-white capitalize transition-colors duration-200 transform bg-orange-600 rounded-md hover:bg-orange-500 focus:outline-none focus:ring focus:ring-orange-300 focus:ring-opacity-80">
                                 {"Email"}
                             </button>
                         </div>

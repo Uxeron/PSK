@@ -5,7 +5,6 @@ export type UploadData = {
     category: ItemCategory | null,
     isToGiveAway: boolean | null,
     userId: string | null,
-    addressId: string | null,
     image: string | null,
 }
 
@@ -53,7 +52,7 @@ export type EditData = {
     userId: string,
     addressId: string,
     image: string,
-  }
+}
 
 export type BrowseData = {
     paging: {
