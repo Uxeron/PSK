@@ -35,8 +35,9 @@ public class AddressService : IAddressService
 
 
 
-    public async Task<Address?> GetAddress(string userId, Guid id) => 
-        await _context.Address
-            .Where(i => i.AddressId == id)
-            .FirstOrDefaultAsync();
+    public async Task<Address?> GetAddress(string userId)
+    {
+        var user = await _context.Users.Where(u => u.UserId == userId).Include(i => i.Address).FirstOrDefaultAsync();
+        return user.Address;
+    }
 }

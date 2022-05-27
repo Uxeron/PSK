@@ -42,7 +42,7 @@ public class ItemService : IItemService
     private async Task<Item> BuildItemEntity(PartialItem partialItem) => new()
         {
             Name = partialItem.Name,
-            Address = await _addressService.GetAddress(partialItem.UserId, partialItem.AddressId),
+            Address = await _addressService.GetAddress(partialItem.UserId),
             Description = partialItem.Description,
             Condition = partialItem.Condition,
             Category = partialItem.Category,
@@ -102,7 +102,7 @@ public class ItemService : IItemService
             .FirstOrDefaultAsync();
 
     public async Task<List<Item>> GetItems() =>
-        await _context.Items.Where(i => i.To == null || DateTime.Compare(i.To.Value, DateTime.Now) < 0 || i.IsGivenAway == false)
+        await _context.Items.Where(i => (i.To == null || DateTime.Compare(i.To.Value, DateTime.Now) < 0) && i.IsGivenAway == false)
             .Include(i => i.User)
             .Include(x => x.Address)
             .Include(x => x.Images)
@@ -128,7 +128,7 @@ public class ItemService : IItemService
 
         if (searchPhrase != null)
         {
-            itemDtos = itemDtos.Where(x => x.Name.Contains(searchPhrase));
+            itemDtos = itemDtos.Where(x => x.Name.ToLower().Contains(searchPhrase.ToLower()));
         }
 
         itemDtos = Filter(filters, itemDtos);
@@ -181,7 +181,7 @@ public class ItemService : IItemService
 
         var item = await GetItem(userId, id);
 
-        if(item == null)
+        if (item == null)
         {
             return null;
         }
@@ -260,7 +260,7 @@ public class ItemService : IItemService
             UploadDate = itemRequest.UploadDate,
             UpdateDate = DateTime.Today,
             User = await _userService.GetUser(itemRequest.UserId),
-            Address = await _addressService.GetAddress(itemRequest.UserId, itemRequest.AddressId),
+            Address = await _addressService.GetAddress(itemRequest.UserId),
             Images = await SaveImages(itemRequest.Name, itemRequest.Image),
         };
     }
