@@ -2,11 +2,11 @@ import { useAuth0 } from "@auth0/auth0-react";
 import React, { useEffect, useState } from "react";
 import DatePicker from "react-datepicker";
 import { useNavigate, useParams } from "react-router-dom";
-import { Spinner } from "../Components/Spinner";
-import { DetailsScreenItemProps, ItemCategory, ItemCondition } from "../Data/model";
-import { itemCategoryMap, itemConditionMap, mapperFullToEdit, mockAdress } from "../Data/utils";
-import ItemService from "../Services/ItemService";
-import { t } from "../text";
+import { Spinner } from "../../Components/Spinner";
+import { DetailsScreenItemProps, ItemCategory, ItemCondition } from "../../Data/model";
+import { itemCategoryMap, itemConditionMap, mapperFullToEdit, mockAdress } from "../../Data/utils";
+import ItemService from "../../Services/ItemService";
+import { t } from "../../text";
 import "react-datepicker/dist/react-datepicker.css";
 
 export const initialDetailScreenItem: DetailsScreenItemProps = {
@@ -54,7 +54,7 @@ export const DetailsScreen = () => {
     const handleEdit = () => {
         const initalize = async () => {
             try {
-                await getAccessTokenSilently().then((token: string) => { ItemService.put({ accessToken: token, itemId: itemId ?? '', data: mapperFullToEdit({ ...data, from: new Date().toISOString(), to: date.toISOString() ?? new Date().toISOString() }), navigate }) })
+                await getAccessTokenSilently().then((token: string) => { ItemService.put({ accessToken: token, itemId: itemId ?? '', data: mapperFullToEdit({ ...data, from: new Date().toISOString(),  to: date.toISOString() ?? new Date().toISOString() }), navigate }) })
             } catch (e) {
                 console.log(e);
             }

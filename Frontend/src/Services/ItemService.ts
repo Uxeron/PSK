@@ -1,4 +1,3 @@
-import { AxiosResponse } from 'axios';
 import { NavigateFunction } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { REACT_APP_SERVER_URL } from '../Common/constants';
@@ -6,12 +5,12 @@ import http from "../Common/http-common";
 import { EditFullItemData, EditOccupationData, UploadData } from '../Data/model';
 
 type GetAllProps = {
-    accessToken: string,
-    city?: string,
-    category?: string,
-    page?: number,
-    condition?: string,
-    searchPhrase?: string
+  accessToken: string,
+  city?: string,
+  category?: string,
+  page?: number,
+  condition?: string,
+  searchPhrase?: string
 }
 
 type GetByIdProps = {
@@ -67,36 +66,21 @@ class ItemService {
   }
 
   async put(props: EditProps) {
-    return http.put(`${BASE_URL}/Item/${props.itemId}`, JSON.stringify({...props.data}), {
+    return http.put(`${BASE_URL}/Item/${props.itemId}`, JSON.stringify({ ...props.data }), {
       headers: {
         'Authorization': `Bearer ${props?.accessToken}`
       }
-    }).then(
-      (res) => handleEdit(res, props.navigate, props.itemId)
-    );
+    }).then(function (res) {
+      if (res.status === 200) {
+        toast.success("Item was successfully edited", {
+          onClick: () => props.navigate(`/details/${props.itemId}`)
+        }); props.navigate(`/details/${props.itemId}`)
+      }
+    }).catch((error) => error.response.status === 409 ? toast.error(`We received conflicting update requests at the same time :( please try again)`) : undefined
+    )
   }
-}
 
-const handleEdit = (res: AxiosResponse<any, any>, navigate: NavigateFunction, id: string) => {
-  switch (res.status) {
-    case 200: {
-      toast.success("Item was successfully edited", {
-        onClick: () => navigate(`/details/${id}`)
-      });
-      // navigate(`/details/${id}`)
-      window.location.reload();
-      break;
-    }
-    case 409: {
-      console.log(409);
-      {/*TODO: Handle 409*/}
-      break;
-    }
-    default: { 
-      toast.error(`Error code: ${res.status}`)
-      break; 
-    } 
-  }
+
 }
 
 export default new ItemService();
