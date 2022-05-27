@@ -40,24 +40,24 @@ export const UploadScreen = () => {
 
     const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
-        if(!areFieldsValid() || name.length === 0 || description.length === 0 || filesContent.length === 0){
-            if(name.length === 0) {
+        if (!areFieldsValid() || name.length === 0 || description.length === 0 || filesContent.length === 0) {
+            if (name.length === 0) {
                 setIsNameValid(false)
             }
-            if(description.length === 0) {
+            if (description.length === 0) {
                 setIsDescriptionValid(false)
             }
-            if(filesContent.length === 0) {
+            if (filesContent.length === 0) {
                 setIsImageMissing(true)
-                
+
             }
             return false
         }
         setOnLoad(true);
-        
+
         const initalize = async () => {
             try {
-                await getAccessTokenSilently().then((token: string) => { ItemService.upload({accessToken: token, data: uploadData, navigate: navigate}) })
+                await getAccessTokenSilently().then((token: string) => { ItemService.upload({ accessToken: token, data: uploadData, navigate: navigate }) })
             } catch (e) {
                 console.log(e);
             }
@@ -84,7 +84,6 @@ export const UploadScreen = () => {
             category: selectedCategory.name,
             isToGiveAway: giveAwayState.name === 'Yes',
             userId: user?.sub ?? '',
-            addressId: userData.address.addressId,
             image: filesContent.map(file => file.content).toString(),
         })
     }
@@ -113,14 +112,15 @@ export const UploadScreen = () => {
     useEffect(() => {
         if (!areFieldsValid() && !toast.isActive("validationToast")) {
             toast.error(`Following fields can't be empty or contain special characters`, {
-            toastId: "validationToast",
-            position: "top-center",
-            autoClose: false,
-            hideProgressBar: true,
-            closeOnClick: true,
-            draggable: true,
-        })}
-        else if(areFieldsValid()) toast.dismiss("validationToast")
+                toastId: "validationToast",
+                position: "top-center",
+                autoClose: false,
+                hideProgressBar: true,
+                closeOnClick: true,
+                draggable: true,
+            })
+        }
+        else if (areFieldsValid()) toast.dismiss("validationToast")
     }, [isNameValid, isDescriptionValid, isImageMissing])
 
     if (loading || onLoad) {
@@ -187,13 +187,6 @@ export const UploadScreen = () => {
                                         {t.uploadScreen.card1.toGiveAwayLabel}
                                     </label>
                                     <TrueFalseSelection setHandler={setGiveAwayState} value={giveAwayState} handleChange={handleChange} />
-                                </div>
-
-                                <div className="w-72 mt-4 top-16 ">
-                                    <label className="text-gray-700 dark:text-gray-200" htmlFor="name">
-                                        {t.uploadScreen.card1.locationLabel}
-                                    </label>
-                                    <LocationListBox setHandler={setLocation} value={location} handleChange={handleChange} />
                                 </div>
                             </div>
 

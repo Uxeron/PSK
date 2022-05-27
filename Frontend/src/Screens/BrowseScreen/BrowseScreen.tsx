@@ -55,6 +55,5 @@ export const BrowseScreen = () => {
             </div>
             {data.items.length !== 0 ? <Pagination amountOfPages={data.paging.numOfPages} currentPage={data.paging.page} setCurrentPage={setCurrentPage} /> : undefined}
         </>
-
     );
 }

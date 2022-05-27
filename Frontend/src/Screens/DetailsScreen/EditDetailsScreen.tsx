@@ -4,7 +4,7 @@ import React, { Fragment, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Spinner } from "../../Components/Spinner";
 import { DetailsScreenItemProps, ItemCategory, ItemCondition } from "../../Data/model";
-import { mapperFullToEdit } from "../../Data/utils";
+import { itemCategoryMap, itemCategoryMapBrowse, itemConditionMap, mapperFullToEdit } from "../../Data/utils";
 import ItemService from "../../Services/ItemService";
 import { t } from "../../text";
 import { initialDetailScreenItem, Row } from "./DetailsScreen";
@@ -137,6 +137,12 @@ export const EditDetailsScreen = () => {
                                     <p className="text-sm text-gray-500">
                                         Description: {tempData.description}
                                     </p>
+                                    <p className="text-sm text-gray-500">
+                                        Category: {itemCategoryMap[tempData.category]}
+                                    </p>
+                                    <p className="text-sm text-gray-500">
+                                        Condition: {itemConditionMap[tempData.condition]}
+                                    </p>
                                 </div>
                                 <div className="mt-2">
                                     <p className="text-sm text-gray-500">
@@ -147,6 +153,12 @@ export const EditDetailsScreen = () => {
                                     </p>
                                     <p className="text-sm text-gray-500">
                                         Description: {initialData.description}
+                                    </p>
+                                    <p className="text-sm text-gray-500">
+                                        Category: {itemCategoryMap[initialData.category]}
+                                    </p>
+                                    <p className="text-sm text-gray-500">
+                                        Condition: {itemConditionMap[initialData.condition]}
                                     </p>
                                 </div>
 

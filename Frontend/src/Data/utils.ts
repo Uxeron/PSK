@@ -7,7 +7,6 @@ export const initialUploadData: UploadData = {
     category: null,
     isToGiveAway: null,
     userId: null,
-    addressId: null,
     image: null,
 }
 
