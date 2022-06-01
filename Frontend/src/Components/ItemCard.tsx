@@ -15,7 +15,7 @@ export const ItemCard = (props: ItemCardProps) => {
         <>
             <a className={`min-w-[200px] block ${isGivenAway ? `contrast-50` : ``}`} href={`/details/${id}`}>
                 <img
-                    className={`object-cover w-full h-80`}
+                    className={`object-contain w-full h-80`}
                     src={image}
                 />
                 <h5 className="mt-4 text-xl font-bold text-gray-900">{name}</h5>

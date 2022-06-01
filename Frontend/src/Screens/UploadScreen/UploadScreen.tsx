@@ -132,7 +132,7 @@ export const UploadScreen = () => {
     }
 
     const isFieldValid = (value: string, isRequired: boolean) => {
-        const format = /[`!@#$%^&*()_+\-=\\[\]{};':"\\|,.<>\\/?~]/;
+        const format = /[`@#$%^&*()_+=\\[\]{};'"\\|<>\\/~]/;
         if (isRequired && value.length === 0) {
             return false
         }

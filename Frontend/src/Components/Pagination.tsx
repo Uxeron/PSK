@@ -8,7 +8,7 @@ type Props = {
 
 export const Pagination = (props: Props) => {
     const { currentPage, amountOfPages, setCurrentPage } = props;
-
+    
     return (
         <div className="flex mx-auto place-content-center mb-6">
             <div onClick={() => setCurrentPage(currentPage - 1)} className={`${currentPage === 1 ? `cursor-not-allowed` : `cursor-pointer`} flex items-center justify-center px-4 py-2 mx-1 text-gray-500 capitalize bg-white rounded-md dark:bg-gray-900 dark:text-gray-600`}>

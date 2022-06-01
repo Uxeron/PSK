@@ -48,7 +48,7 @@ class ItemService {
   }
 
   async getAll(props?: GetAllProps) {
-    const url = `${BASE_URL}/Item${props ? `?` : ``}${props?.city ? `City=${props.city}&` : ``}${!props?.category ? `` : (props?.category == "All") ? `` : `Category=${props?.category}&`}${props?.page ? `Page=${props.page}&` : ``}${props?.searchPhrase ? `SearchPhrase=${props.searchPhrase}&` : ``}ItemsPerPage=12`
+    const url = `${BASE_URL}/Item${props ? `?` : ``}${props?.city ? `City=${props.city}&` : ``}${!props?.category ? `` : (props?.category == "All") ? `` : `Category=${props?.category}&`}${!props?.condition ? `` : (props?.condition == "All") ? `` : `Condition=${props?.condition}&`}${props?.page ? `Page=${props.page}&` : ``}${props?.searchPhrase ? `SearchPhrase=${props.searchPhrase}&` : ``}ItemsPerPage=12`
 
     return http.get(url, {
       headers: {
@@ -74,7 +74,7 @@ class ItemService {
       if (res.status === 200) {
         toast.success("Item was successfully edited", {
           onClick: () => props.navigate(`/details/${props.itemId}`)
-        }); props.navigate(`/details/${props.itemId}`)
+        })
       }
     }).catch((error) => error.response.status === 409 ? toast.error(`We received conflicting update requests at the same time :( please try again)`) : undefined
     )

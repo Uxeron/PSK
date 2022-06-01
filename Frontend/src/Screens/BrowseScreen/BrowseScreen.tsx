@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { ItemCard } from '../../Components/ItemCard';
 import { Pagination } from '../../Components/Pagination';
-import { BrowseDataInitialValues, itemCategories, itemCategoryMapBrowse, itemConditions } from '../../Data/utils';
+import { BrowseDataInitialValues, itemCategories, itemCategoryMapBrowse, itemConditionMapBrowse, itemConditions } from '../../Data/utils';
 import ItemService from '../../Services/ItemService';
 import { BrowseData, ItemCategory, ItemCondition } from '../../Data/model'
 import { ItemCategoryListBoxBrowse } from './ItemCategoryListBoxBrowse';
@@ -30,13 +30,13 @@ export const BrowseScreen = () => {
             }
         };
         initalize();
-    }, [getAccessTokenSilently]);
+    }, [getAccessTokenSilently, currentPage]);
 
     if (isLoading) {
         return <Spinner />;
     }
 
-    const getFiltered = () => ItemService.getAll({ accessToken, page: currentPage, category: itemCategoryMapBrowse[category.name], searchPhrase }).then((val) => setData(val));
+    const getFiltered = () => ItemService.getAll({ accessToken, page: currentPage, condition: itemConditionMapBrowse[condition.name], category: itemCategoryMapBrowse[category.name], searchPhrase }).then((val) => setData(val));
 
     return (
         <>
@@ -45,6 +45,7 @@ export const BrowseScreen = () => {
 
                 <ItemCategoryListBoxBrowse value={category} setHandler={setCategory} />
                 <ItemConditionListBoxBrowse value={condition} setHandler={setCondition} />
+                {console.log(condition)}
 
                 <button onClick={() => getFiltered()} className="px-4 mx-auto py-2 font-medium tracking-wide text-white capitalize transition-colors duration-200 transform bg-orange-600 rounded-md hover:bg-orange-500 focus:outline-none focus:ring focus:ring-orange-300 focus:ring-opacity-80">
                     {t.browseScreen.apply}
@@ -53,6 +54,7 @@ export const BrowseScreen = () => {
             <div className="m-auto min-w-[1000px] max-w-7xl grid grid-cols-4 gap-12 mb-16">
                 {data.items.map((item) => { return <ItemCard key={item.itemId} id={item.itemId} name={item.name} description={item.description} image={item.image} /> })}
             </div>
+    {console.log(currentPage)}
             {data.items.length !== 0 ? <Pagination amountOfPages={data.paging.numOfPages} currentPage={data.paging.page} setCurrentPage={setCurrentPage} /> : undefined}
         </>
     );

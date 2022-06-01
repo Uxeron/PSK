@@ -8,6 +8,7 @@ import UserService from '../Services/UserService'
 
 export const LandingPage = () => {
   const { isLoading, loginWithRedirect, user, getAccessTokenSilently } = useAuth0();
+  const [loading, setLoading] = useState<boolean>(false)
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -15,7 +16,8 @@ export const LandingPage = () => {
     if (user) {
       const initalize = async () => {
         try {
-          await getAccessTokenSilently().then((token: string) => { UserService.getById({ accessToken: token, id: user?.sub ?? '' }).then((res) => { res.status === 200 ? navigate('/browse') : navigate('/register') }) })
+          setLoading(true)
+          await getAccessTokenSilently().then((token: string) => { UserService.getById({ accessToken: token, id: user?.sub ?? '' }).then((res) => { res.status === 200 ? navigate('/browse') : navigate('/register') }).then(() => setLoading(false)) })
         } catch (e) {
           console.log(e);
         }
@@ -24,7 +26,7 @@ export const LandingPage = () => {
     }
   }, [user]);
 
-  if (isLoading) {
+  if (isLoading || loading) {
     return <Spinner />;
   }
 

@@ -2,6 +2,7 @@ import { useAuth0 } from "@auth0/auth0-react";
 import { Dialog, Transition } from "@headlessui/react";
 import React, { Fragment, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import { toast } from "react-toastify";
 import { Spinner } from "../../Components/Spinner";
 import { DetailsScreenItemProps, ItemCategory, ItemCondition } from "../../Data/model";
 import { itemCategoryMap, itemCategoryMapBrowse, itemConditionMap, mapperFullToEdit } from "../../Data/utils";
@@ -24,6 +25,7 @@ export const EditDetailsScreen = () => {
     const [condition, setCondition] = useState<{ name: ItemCondition; }>({ name: data.condition })
     const [name, setName] = useState<string>('')
     const [loading, setLoading] = useState<boolean>(false)
+    const [localLoading, setLocalLoading] = useState<boolean>(false)
     const [description, setDescription] = useState<string>('')
     const [isOpen, setIsOpen] = useState(false)
 
@@ -48,6 +50,7 @@ export const EditDetailsScreen = () => {
 
 
     function openModal() {
+        setLocalLoading(false)
         setLoading(false)
         setIsOpen(true)
     }
@@ -70,16 +73,26 @@ export const EditDetailsScreen = () => {
     }
 
     const handleSubmit = () => {
-        setLoading(true);
         const checkForChanges = async () => {
             try {
+                setLocalLoading(true)
                 await getAccessTokenSilently().then((token: string) => {
                     ItemService.getById({ accessToken: token, id: itemId ?? '' }).then((res) => {
                         setTempData(res);
-                        (res.name === data.name && res.description === data.description && res.category === data.category && res.condition === data.condition) ? ItemService.put({ accessToken: token, itemId: itemId ?? '', data: mapperFullToEdit({ ...data, name, description, category: category.name, condition: condition.name }), navigate }).then(() => setLoading(false)) :
+                        (res.name === data.name && res.description === data.description && res.category === data.category && res.condition === data.condition) ? ItemService.put({ accessToken: token, itemId: itemId ?? '', data: mapperFullToEdit({ ...data, name: name ? name : initialData.name, description: description ? description : initialData.description, category: category.name, condition: condition.name }), navigate }).then(() => setLocalLoading(false)) :
                             openModal()
                     })
-                })
+                });
+                toast('Your item is being processed at the moment.', {
+                    position: "top-right",
+                    autoClose: 5000,
+                    hideProgressBar: true,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    type: "info",
+                });
             } catch (e) {
                 console.log(e);
             }
@@ -194,15 +207,18 @@ export const EditDetailsScreen = () => {
                 {data.images && <div>
                     <img src={`${data.images[0].prefix},${data.images[0].imageData}`} />
                 </div>}
-                <div className={'mt-6'}>
+                <div className={'mt-6 mr-16'}>
                     <div className="grid grid-cols-2 gap-4 mb-4">
                         <div className="ml-2 mr-auto">
                             <label className="text-gray-700 dark:text-gray-200" htmlFor="name">
-                                {t.uploadScreen.card1.nameLabel}
+                                <p className="text-left">
+                                    {t.uploadScreen.card1.nameLabel}
+                                </p>
+
                             </label>
                         </div>
-                        <div className="mr-16 ml-auto">
-                            <input onBlur={(event) => setName(event.target.value)} className="font-bold text-gray-700 dark:text-gray-200" placeholder={data.name ?? tempData.name} />
+                        <div className="whitespace-normal mr-16 ml-auto">
+                            <textarea rows={3} onBlur={(event) => setName(event.target.value)} className="border-2 rounded font-bold text-gray-700 dark:text-gray-200" defaultValue={data.name ?? tempData.name} />
                         </div>
                     </div>
                     <div className="grid grid-cols-2 gap-4 mb-4">
@@ -212,17 +228,16 @@ export const EditDetailsScreen = () => {
                             </label>
                         </div>
                         <div className="mr-16 ml-auto">
-                            <input onBlur={(event) => setDescription(event.target.value)} className="font-bold text-gray-700 dark:text-gray-200" placeholder={data.description ?? tempData.description} />
+                            <textarea rows={4} onBlur={(event) => setDescription(event.target.value)} className="border-2 rounded font-bold text-gray-700 dark:text-gray-200" defaultValue={data.description ?? tempData.description} />
                         </div>
                     </div>
-                    {/* <Row label={t.uploadScreen.card1.categoryLabel} item={itemCategoryMap[data.category]} /> */}
-
                     <div className="grid grid-cols-2 gap-4 mb-4">
                         <div className="ml-2 mr-auto">
                             <label className="text-gray-700 dark:text-gray-200" htmlFor="name">
                                 {t.uploadScreen.card1.categoryLabel}
                             </label>
                         </div>
+                        {console.log(category)}
                         <ItemCategoryListBoxDetails value={category} setHandler={setCategory} inBrowse={true} />
                     </div>
 
@@ -238,7 +253,7 @@ export const EditDetailsScreen = () => {
             </div>
             <div className='w-max mx-auto'>
                 <button onClick={() => handleSubmit()} className='px-4 mb-12 py-2 font-medium tracking-wide text-white capitalize transition-colors duration-200 transform bg-orange-600 rounded-md hover:bg-orange-500 focus:outline-none focus:ring focus:ring-orange-300 focus:ring-opacity-80'>
-                    Submit your edition
+                    {localLoading ? 'Loading...' : 'Submit your edition'}
                 </button>
 
             </div>
@@ -256,7 +271,7 @@ export const RowInput = (props: { label: string, item: string }) => {
                     {label}
                 </label>
             </div>
-            <div className="mr-16 ml-auto">
+            <div className="w-full mr-16 ml-auto">
                 <input className="font-bold text-gray-700 dark:text-gray-200" placeholder={item} />
             </div>
         </div>
